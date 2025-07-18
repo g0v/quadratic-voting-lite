@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    font-family: "Noto Sans TC", sans-serif;
+  }
+  body {
+  }
+  h1 {
+    @apply text-4xl font-bold mb-4;
+  }
+  h2 {
+    @apply text-3xl font-bold mb-4;
+  }
+  h3 {
+    @apply text-2xl font-bold mb-4;
+  }
+  h4 {
+    @apply text-xl font-bold mb-2;
+  }
+  h5 {
+    @apply text-lg font-bold mb-2;
+  }
+  h6 {
+    @apply text-base font-bold mb-2;
+  }
+  p {
+    &:not(:last-child) {
+      @apply mb-4;
+    }
+  }
+  input {
+    @apply border border-gray-300 rounded-md p-2;
+    &:disabled {
+      @apply bg-gray-200;
+    }
+  }
+  textarea {
+    @apply border border-gray-300 rounded-md p-2;
+    &:disabled {
+      @apply bg-gray-200;
+    }
+  }
+  button {
+    @apply bg-blue-500 text-white rounded-md p-2 px-4 hover:opacity-80 cursor-pointer;
+  }
+  a[href] {
+    @apply text-blue-500 hover:text-blue-600 underline;
+  }
+  table {
+    @apply border-2;
+  }
+  th {
+    @apply p-4 border-r border-b-2;
+  }
+  td {
+    @apply p-4 border-r border-b;
+  }
+}
+
+@layer utilities {
+  .container {
+    @apply lg:max-w-5xl mx-auto px-4;
+  }
+}

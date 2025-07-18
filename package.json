@@ -1,0 +1,28 @@
+{
+  "name": "quadratic-vote-lite",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@prisma/nuxt": "^0.3.0",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@tailwindcss/vite": "^4.1.11",
+    "nanoid": "^5.1.5",
+    "nuxt": "^4.0.0",
+    "postcss": "^8.5.6",
+    "postcss-nested": "^7.0.2",
+    "tailwindcss": "^4.1.11",
+    "vue": "^3.5.17",
+    "vue-router": "^4.5.1"
+  }
+}

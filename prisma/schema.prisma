@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  uuid        String   @id
+  secret      String
+  title       String
+  description String?
+  startAt     DateTime
+  endAt       DateTime
+  credits     Int      @default(99)
+  data        String   @default("{}")
+  votes       Vote[]
+  createdAt   DateTime @default(now())
+}
+
+model Vote {
+  uuid     String @id
+  data     String @default("{}")
+  event    Event  @relation(fields: [eventUid], references: [uuid])
+  eventUid String
+}
