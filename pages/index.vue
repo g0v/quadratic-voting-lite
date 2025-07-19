@@ -10,7 +10,7 @@
           <span>to</span>
           <input type="datetime-local" v-model="endAt" />
           <ClientOnly>
-            <span class="md:col-span-4 text-gray-500">Current Timezone: {{ currentTimezone }}</span>
+            <span class="md:col-span-4 text-stone-500">Current Timezone: {{ currentTimezone }}</span>
           </ClientOnly>
         </div>
         <div class="flex gap-4 items-center">

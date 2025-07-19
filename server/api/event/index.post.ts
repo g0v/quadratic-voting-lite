@@ -11,7 +11,7 @@ export default defineEventHandler(async (e) => {
         uuid: eventid
       }
     })
-    if (secret !== event.secret) {
+    if (secret !== event?.secret) {
       throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
     await prisma.event.update({

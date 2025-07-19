@@ -1,13 +1,19 @@
 <script setup>
 const { eventid } = useRoute().params
-const { secret } = useRoute().query
+let { secret } = useRoute().query
 
 const cookie = useCookie('secret')
 if (secret) {
   cookie.value = secret
+} else {
+  secret = cookie.value
 }
 
-const { data: event } = await useFetch(`/api/event/${eventid}`)
+const { data: event } = await useFetch(`/api/event/${eventid}`, {
+  headers: {
+    cookie: `secret=${secret}`
+  }
+})
 if (!event) {
   throw createError({ statusCode: 404, statusMessage: 'Event not found' })
 }
@@ -148,7 +154,8 @@ const addSubject = async () => {
       <ClientOnly>
         <div class="mb-4">
           <h3 class="mb-4">Admin Link <span class="text-red-500">(Please keep this link private)</span></h3>
-          <div @click="copyLink(adminLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">{{ adminLink }}
+          <div @click="copyLink(adminLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">{{ adminLink
+            }}
             <Icon>copy_all</Icon>
           </div>
         </div>
@@ -157,7 +164,7 @@ const addSubject = async () => {
         <div class="mb-4">
           <h3 class="mb-4">Statistic Link</h3>
           <div @click="copyLink(resultLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">{{ resultLink
-            }}
+          }}
             <Icon>copy_all</Icon>
           </div>
         </div>
@@ -175,7 +182,7 @@ const addSubject = async () => {
           <input type="datetime-local" v-model="endAt" :disabled="timeStatus !== 0" />
         </div>
         <ClientOnly>
-          <span class="md:col-span-4 text-gray-500">Current Timezone: {{ currentTimezone }}</span>
+          <span class="md:col-span-4 text-stone-500">Current Timezone: {{ currentTimezone }}</span>
         </ClientOnly>
         <h4>Credits per voter</h4>
         <div class="flex gap-4 items-center">
@@ -187,8 +194,8 @@ const addSubject = async () => {
       <h3>Subjects</h3>
       <div class="flex flex-col gap-2 my-5 border border-stone-300 rounded-md">
         <div v-if="subjects.length === 0" class="p-4">No subjects added</div>
-        <div v-for="(subject, index) in subjects" :key="subject.name" class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300"
-          :class="{ 'border-t': index !== 0 }">
+        <div v-for="(subject, index) in subjects" :key="subject.name"
+          class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300" :class="{ 'border-t': index !== 0 }">
           <button v-if="timeStatus === 0" @click="editSubject(subject)" class="bg-yellow-500 w-min h-min px-2 py-2">
             <Icon>edit</Icon>
           </button>
@@ -214,17 +221,19 @@ const addSubject = async () => {
         </form>
       </template>
     </div>
-    <form v-if="!printPage" @submit.prevent="generateVotes" class="mt-20 mb-5 flex gap-2 items-center">
-      <button type="submit">Add</button>
-      <input type="number" v-model="voteCount" min="1" max="999" />
-      <span>Voter</span>
-      <span class="border-l pl-4 ml-4">Current Voters: {{ event.votes.length }}</span>
+    <form v-if="!printPage" @submit.prevent="generateVotes" class="mt-20 mb-5 grid md:grid-cols-3 gap-2 items-center">
+      <div class="flex gap-2 items-center">
+        <button type="submit">Add</button>
+        <input type="number" v-model="voteCount" min="1" max="999" />
+        <span>Voter</span>
+      </div>
+      <span class="text-stone-500">Current Voters: {{ event.votes.length }}</span>
       <button @click="PrintPage" class="ms-auto">Print Page</button>
     </form>
   </div>
   <div class="grid grid-cols-2 bg-white">
     <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="border p-2">
-      <a target="_blank" :href="`/vote/${vote.uuid}`" class="grid grid-cols-[2rem_1fr_1fr] gap-4">
+      <a target="_blank" :href="`/vote/${vote.uuid}`" class="grid md:grid-cols-[2rem_1fr_1fr] gap-4">
         <span>{{ index + 1 }}</span>
         <span>{{ vote.uuid }}</span>
         <ClientOnly>

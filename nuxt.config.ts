@@ -1,7 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import dotenv from 'dotenv'
+dotenv.config()
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   modules: ["@prisma/nuxt"],
   experimental: {
     componentIslands: true,
@@ -13,4 +16,8 @@ export default defineNuxtConfig({
       'postcss-nested': {},
     }
   },
+   alias: {
+    '.prisma/client/index-browser': '@prisma/client',
+    '.prisma/client/default': '@prisma/client',
+  }
 })
