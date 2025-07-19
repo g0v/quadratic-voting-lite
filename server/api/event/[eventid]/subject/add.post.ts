@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import prisma from '~/lib/prisma'
 import { nanoid } from 'nanoid'
-
-const prisma = new PrismaClient()
 
 export default defineEventHandler(async (e) => {
   const { subject } = await readBody(e)
@@ -25,5 +23,5 @@ export default defineEventHandler(async (e) => {
     where: { uuid: eventId },
     data: { data: JSON.stringify(event.data) }
   })
-  return event
+  return event.data.subjects
 })

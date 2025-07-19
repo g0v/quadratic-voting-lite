@@ -1,14 +1,13 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '~/lib/prisma'
 
 export default defineEventHandler(async (e) => {
   const { eventid, title, description, startAt, endAt, credits } = await readBody(e)
   if (eventid) {
     const secret = getCookie(e, 'secret')
     const event = await prisma.event.findUnique({
-      where: {
-        uuid: eventid
+      where: { uuid: eventid },
+      include: {
+        votes: true
       }
     })
     if (secret !== event?.secret) {

@@ -1,7 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-import { nanoid } from 'nanoid'
-
-const prisma = new PrismaClient()
+import prisma from '~/lib/prisma'
 
 export default defineEventHandler(async (e) => {
   const { subjectId } = await readBody(e)

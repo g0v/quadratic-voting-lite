@@ -40,7 +40,7 @@
     }
   }
   button {
-    @apply bg-yellow-500 text-white rounded-md p-2 px-4 hover:opacity-80 cursor-pointer;
+    @apply bg-yellow-500 text-white rounded-md p-2 px-4 hover:opacity-80 disabled:brightness-75 cursor-pointer;
   }
   a[href] {
     @apply text-blue-500 hover:text-blue-600 underline;
@@ -60,4 +60,8 @@
   .container {
     @apply lg:max-w-5xl mx-auto px-4;
   }
+}
+
+.spinner {
+  @apply inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2;
 }

@@ -1,10 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import dotenv from 'dotenv'
-dotenv.config()
-
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   modules: ["@prisma/nuxt"],
   experimental: {
     componentIslands: true,
@@ -17,7 +14,6 @@ export default defineNuxtConfig({
     }
   },
    alias: {
-    '.prisma/client/index-browser': '@prisma/client',
-    '.prisma/client/default': '@prisma/client',
+    '.prisma/client': '~/node_modules/.prisma/client',
   }
 })

@@ -40,6 +40,7 @@ const description = ref(event.value.description)
 const startAt = ref(formatDateForInput(new Date(event.value.startAt)))
 const endAt = ref(formatDateForInput(new Date(event.value.endAt)))
 const credits = ref(event.value.credits)
+const waitingRequest = ref(false)
 subjects.value = event.value.data.subjects || []
 
 const updateEvent = async () => {
@@ -48,13 +49,17 @@ const updateEvent = async () => {
     return
   }
   if (new Date(startAt.value) <= new Date()) {
-    let res = confirm('Start time is in the past, you will not able to change things after this. Vote will start immediately. Do you want to continue?')
-    if (!res) {
+    var shouldReload = confirm('Start time is in the past, you will not able to change things after this. Vote will start immediately. Do you want to continue?')
+    if (!shouldReload) {
       return
     }
   }
+  waitingRequest.value = 'ue'
   const res = await $fetch('/api/event', {
     method: 'POST',
+    headers: {
+      cookie: `secret=${secret}`
+    },
     body: {
       eventid: eventid,
       title: title.value,
@@ -64,18 +69,26 @@ const updateEvent = async () => {
       credits: credits.value
     }
   })
-  if (res) {
+  waitingRequest.value = false
+  if (shouldReload) {
     window.location.reload()
+  } else {
+    event.value = res
   }
 }
 
 const generateVotes = async () => {
-  const votes = await useFetch(`/api/event/${eventid}/generate`, {
+  waitingRequest.value = 'gv'
+  await $fetch(`/api/event/${eventid}/generate`, {
     method: 'POST',
+    headers: {
+      cookie: `secret=${secret}`
+    },
     body: {
       voteCount: voteCount.value
     }
   })
+  waitingRequest.value = false
   window.location.reload()
 }
 
@@ -127,8 +140,11 @@ const copyLink = async (link) => {
 const editSubject = async (subject) => {
   newSubject.value = subject
   subjects.value = subjects.value.filter(s => s.id !== subject.id)
-  await useFetch(`/api/event/${eventid}/subject/delete`, {
+  await $fetch(`/api/event/${eventid}/subject/delete`, {
     method: 'POST',
+    headers: {
+      cookie: `secret=${secret}`
+    },
     body: {
       subjectId: subject.id
     }
@@ -136,14 +152,20 @@ const editSubject = async (subject) => {
 }
 
 const addSubject = async () => {
-  subjects.value.push(newSubject.value)
-  await useFetch(`/api/event/${eventid}/subject/add`, {
+  waitingRequest.value = 'as'
+  const _temp = newSubject.value
+  newSubject.value = {}
+  const _subjects = await $fetch(`/api/event/${eventid}/subject/add`, {
     method: 'POST',
+    headers: {
+      cookie: `secret=${secret}`
+    },
     body: {
-      subject: newSubject.value
+      subject: _temp
     }
   })
-  newSubject.value = {}
+  subjects.value = _subjects
+  waitingRequest.value = false
 }
 
 </script>
@@ -189,7 +211,7 @@ const addSubject = async () => {
           <input type="number" placeholder="Credits" v-model="credits" min="1" max="999" :disabled="timeStatus !== 0" />
         </div>
 
-        <button type="submit" class="w-fit mx-auto" v-if="timeStatus === 0">Update Event</button>
+        <button type="submit" class="w-fit mx-auto" v-if="timeStatus === 0" :disabled="waitingRequest === 'ue'"><Spinner v-if="waitingRequest === 'ue'" />Update Event</button>
       </form>
       <h3>Subjects</h3>
       <div class="flex flex-col gap-2 my-5 border border-stone-300 rounded-md">
@@ -217,13 +239,13 @@ const addSubject = async () => {
           <label for="subjectUrl">Subject URL
           </label>
           <input type="text" v-model="newSubject.url" />
-          <button type="submit" class="w-fit mt-4 mx-auto">Add Subject</button>
+          <button type="submit" class="w-fit mt-4 mx-auto" :disabled="waitingRequest === 'as'"><Spinner v-if="waitingRequest === 'as'" />Add Subject</button>
         </form>
       </template>
     </div>
     <form v-if="!printPage" @submit.prevent="generateVotes" class="mt-20 mb-5 grid md:grid-cols-3 gap-2 items-center">
       <div class="flex gap-2 items-center">
-        <button type="submit">Add</button>
+        <button type="submit" :disabled="waitingRequest === 'gv'"><Spinner v-if="waitingRequest === 'gv'" />Add</button>
         <input type="number" v-model="voteCount" min="1" max="999" />
         <span>Voter</span>
       </div>
