@@ -87,7 +87,7 @@ onMounted(() => {
     </div>
     <div class="flex flex-col gap-4">
       <div v-for="subject in event.data.subjects" :key="subject"
-        class="p-4 border border-gray-300 rounded-md grid grid-cols-[1fr_auto_10rem] gap-4">
+        class="p-4 bg-white drop-shadow-md rounded-md grid grid-cols-[1fr_auto_10rem] gap-4">
         <div class="overflow-hidden">
           <h2 class="break-words">{{ subject.name }}</h2>
           <p>{{ subject.description }}</p>
@@ -105,7 +105,7 @@ onMounted(() => {
           </template>
           <div v-else></div>
           <div class="grid grid-cols-2 gap-2 my-auto">
-            <div class="py-2 text-center border border-gray-300 font-bold rounded-md col-span-2">{{ voteData[subject.id]
+            <div class="py-2 text-center border border-stone-300 font-bold rounded-md col-span-2">{{ voteData[subject.id]
               || 0 }}
             </div>
             <button @click="voteSubject(subject.id, -1)" class="bg-black text-white">-</button>

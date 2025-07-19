@@ -1,25 +1,26 @@
 <template>
-  <div class="max-w-screen-sm mx-auto py-10 px-4">
-    <h1 class="mb-5">Create Event</h1>
-    <form @submit.prevent="createEvent" class="flex flex-col gap-4">
-      <input type="text" placeholder="Event Title" v-model="title" maxlength="100" />
-      <textarea placeholder="Event Description" v-model="description" maxlength="1000" />
-      <div class="grid grid-cols-[auto_auto_auto_auto] gap-2 items-center">
-        <span>Start from</span>
-        <input type="datetime-local" v-model="startAt" />
-        <span>to</span>
-        <input type="datetime-local" v-model="endAt" />
-        <ClientOnly>
-          <span class="col-span-4 text-gray-500">Current Timezone: {{ currentTimezone }}</span>
-        </ClientOnly>
-      </div>
-      <div class="flex gap-4 items-center">
-        <span>Credits per vote</span>
-        <input type="number" placeholder="Credits" v-model="credits" min="1" max="99999" />
-      </div>
+  <div class="min-h-svh flex items-center justify-center p-4">
+    <div class="px-4 py-6 bg-white rounded-md drop-shadow-md w-full max-w-screen-sm">
+      <form @submit.prevent="createEvent" class="flex flex-col gap-4">
+        <input type="text" placeholder="Event Title" v-model="title" maxlength="100" />
+        <textarea placeholder="Event Description" v-model="description" maxlength="1000" />
+        <div class="grid md:grid-cols-[auto_auto_auto_auto] gap-2 items-center">
+          <span>Start from</span>
+          <input type="datetime-local" v-model="startAt" />
+          <span>to</span>
+          <input type="datetime-local" v-model="endAt" />
+          <ClientOnly>
+            <span class="md:col-span-4 text-gray-500">Current Timezone: {{ currentTimezone }}</span>
+          </ClientOnly>
+        </div>
+        <div class="flex gap-4 items-center">
+          <span>Credits per vote</span>
+          <input type="number" placeholder="Credits" v-model="credits" min="1" max="99999" />
+        </div>
 
-      <button type="submit" class="w-fit mx-auto">Create Event</button>
-    </form>
+        <button type="submit" class="w-fit mx-auto mt-10">Create Event</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -65,7 +66,7 @@ const createEvent = async () => {
     }
   })
   if (res) {
-    navigateTo(`/admin/${res.uuid}?secret=${res.secret}`)
+    window.location.href = `/admin/${res.uuid}?secret=${res.secret}`
   }
 }
 </script>

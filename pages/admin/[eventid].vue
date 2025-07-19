@@ -42,7 +42,7 @@ const updateEvent = async () => {
     return
   }
   if (new Date(startAt.value) <= new Date()) {
-    let res = confirm('Start time is in the past, you will not able to change things after this. Do you want to continue?')
+    let res = confirm('Start time is in the past, you will not able to change things after this. Vote will start immediately. Do you want to continue?')
     if (!res) {
       return
     }
@@ -144,11 +144,11 @@ const addSubject = async () => {
 
 <template>
   <div class="container py-10">
-    <template v-if="!printPage">
+    <div v-if="!printPage" class="bg-white rounded-md drop-shadow-md p-4">
       <ClientOnly>
         <div class="mb-4">
           <h3 class="mb-4">Admin Link <span class="text-red-500">(Please keep this link private)</span></h3>
-          <div @click="copyLink(adminLink)" class="p-1 border rounded-md cursor-pointer">{{ adminLink }}
+          <div @click="copyLink(adminLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">{{ adminLink }}
             <Icon>copy_all</Icon>
           </div>
         </div>
@@ -156,25 +156,26 @@ const addSubject = async () => {
       <ClientOnly>
         <div class="mb-4">
           <h3 class="mb-4">Statistic Link</h3>
-          <div @click="copyLink(resultLink)" class="p-1 border rounded-md cursor-pointer">{{ resultLink }}
+          <div @click="copyLink(resultLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">{{ resultLink
+            }}
             <Icon>copy_all</Icon>
           </div>
         </div>
       </ClientOnly>
-      <form @submit.prevent="updateEvent" class="flex flex-col gap-4 mb-20 border rounded-md p-4">
+      <form @submit.prevent="updateEvent" class="flex flex-col gap-4 mb-20 border border-stone-300 rounded-md p-4">
         <h4>Event Title</h4>
         <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" />
         <h4>Event Description</h4>
         <textarea placeholder="Event Description" v-model="description" :disabled="timeStatus !== 0" />
         <h4>Event Duration</h4>
-        <div class="flex gap-4 items-center">
+        <div class="grid md:grid-cols-[auto_auto_auto_auto] w-max gap-4 items-center">
           <span>Start from</span>
           <input type="datetime-local" v-model="startAt" :disabled="timeStatus !== 0" />
           <span>to</span>
           <input type="datetime-local" v-model="endAt" :disabled="timeStatus !== 0" />
         </div>
         <ClientOnly>
-          <span class="text-gray-500">Current Timezone: {{ currentTimezone }}</span>
+          <span class="md:col-span-4 text-gray-500">Current Timezone: {{ currentTimezone }}</span>
         </ClientOnly>
         <h4>Credits per voter</h4>
         <div class="flex gap-4 items-center">
@@ -184,11 +185,13 @@ const addSubject = async () => {
         <button type="submit" class="w-fit mx-auto" v-if="timeStatus === 0">Update Event</button>
       </form>
       <h3>Subjects</h3>
-      <div class="flex flex-col gap-2 my-5 border rounded-md">
+      <div class="flex flex-col gap-2 my-5 border border-stone-300 rounded-md">
         <div v-if="subjects.length === 0" class="p-4">No subjects added</div>
-        <div v-for="(subject, index) in subjects" :key="subject.name" class="p-2 gap-2 grid grid-cols-[auto_1fr]"
+        <div v-for="(subject, index) in subjects" :key="subject.name" class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300"
           :class="{ 'border-t': index !== 0 }">
-          <button v-if="timeStatus === 0" @click="editSubject(subject)" class="bg-yellow-500 w-min h-min px-2 py-2"><Icon>edit</Icon></button>
+          <button v-if="timeStatus === 0" @click="editSubject(subject)" class="bg-yellow-500 w-min h-min px-2 py-2">
+            <Icon>edit</Icon>
+          </button>
           <div>
             <h5>{{ subject.name }}</h5>
             <div>{{ subject.description }}</div>
@@ -197,7 +200,7 @@ const addSubject = async () => {
         </div>
       </div>
       <template v-if="timeStatus === 0">
-        <form @submit.prevent="addSubject" class="my-5 p-4 border rounded-md flex flex-col gap-2 mb-20">
+        <form @submit.prevent="addSubject" class="my-5 p-4 border border-stone-300 rounded-md flex flex-col gap-2">
           <label for="subjectName">Subject Name
           </label>
           <input type="text" v-model="newSubject.name" />
@@ -210,25 +213,25 @@ const addSubject = async () => {
           <button type="submit" class="w-fit mt-4 mx-auto">Add Subject</button>
         </form>
       </template>
-      <form @submit.prevent="generateVotes" class="mt-20 mb-5 flex gap-2 items-center">
-        <button type="submit">Generate</button>
-        <input type="number" v-model="voteCount" min="1" max="999" />
-        <span>Voter</span>
-        <span class="border-l pl-4 ml-4">Current Voters: {{ event.votes.length }}</span>
-        <button @click="PrintPage" class="ms-auto">Print Page</button>
-      </form>
-    </template>
-    <div class="grid grid-cols-2">
-      <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="border p-2">
-        <a target="_blank" :href="`/vote/${vote.uuid}`" class="grid grid-cols-[2rem_1fr_1fr] gap-4">
-          <span>{{ index + 1 }}</span>
-          <span>{{ vote.uuid }}</span>
-          <ClientOnly>
-            <img class="w-40 p-4"
-              :src="`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${getQRData(vote.uuid)}`" />
-          </ClientOnly>
-        </a>
-      </div>
+    </div>
+    <form v-if="!printPage" @submit.prevent="generateVotes" class="mt-20 mb-5 flex gap-2 items-center">
+      <button type="submit">Add</button>
+      <input type="number" v-model="voteCount" min="1" max="999" />
+      <span>Voter</span>
+      <span class="border-l pl-4 ml-4">Current Voters: {{ event.votes.length }}</span>
+      <button @click="PrintPage" class="ms-auto">Print Page</button>
+    </form>
+  </div>
+  <div class="grid grid-cols-2 bg-white">
+    <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="border p-2">
+      <a target="_blank" :href="`/vote/${vote.uuid}`" class="grid grid-cols-[2rem_1fr_1fr] gap-4">
+        <span>{{ index + 1 }}</span>
+        <span>{{ vote.uuid }}</span>
+        <ClientOnly>
+          <img class="w-40 p-4"
+            :src="`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${getQRData(vote.uuid)}`" />
+        </ClientOnly>
+      </a>
     </div>
   </div>
 </template>

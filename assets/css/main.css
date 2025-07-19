@@ -5,6 +5,7 @@
     font-family: "Noto Sans TC", sans-serif;
   }
   body {
+    @apply bg-amber-100;
   }
   h1 {
     @apply text-4xl font-bold mb-4;
@@ -29,20 +30,17 @@
       @apply mb-4;
     }
   }
-  input {
-    @apply border border-gray-300 rounded-md p-2;
+  input, textarea {
+    @apply border border-stone-300 rounded-md p-2;
     &:disabled {
       @apply bg-gray-200;
     }
-  }
-  textarea {
-    @apply border border-gray-300 rounded-md p-2;
-    &:disabled {
-      @apply bg-gray-200;
+    &:focus, &:focus-visible {
+      @apply outline-none ring-2 ring-yellow-300;
     }
   }
   button {
-    @apply bg-blue-500 text-white rounded-md p-2 px-4 hover:opacity-80 cursor-pointer;
+    @apply bg-yellow-500 text-white rounded-md p-2 px-4 hover:opacity-80 cursor-pointer;
   }
   a[href] {
     @apply text-blue-500 hover:text-blue-600 underline;
