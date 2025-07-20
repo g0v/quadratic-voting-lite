@@ -256,7 +256,7 @@ const addSubject = async () => {
     </form>
   </div>
   <div class="grid grid-cols-2 bg-white">
-    <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="border p-2">
+    <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="border p-2 break-inside-avoid">
       <a target="_blank" :href="`/vote/${vote.uuid}`" class="grid md:grid-cols-[2rem_1fr_1fr] gap-4">
         <span>{{ index + 1 }}</span>
         <span>{{ vote.uuid }}</span>

@@ -93,24 +93,25 @@ onMounted(() => {
           <p>{{ subject.description }}</p>
           <a :href="subject.url" target="_blank">{{ subject.url }}</a>
         </div>
-        <template v-if="timeStatus === 0">
-          <p>Voting not started</p>
-        </template>
-        <template v-else-if="timeStatus === 2">
-          <p>Voting ended</p>
-        </template>
-        <template v-else>
-          <div class="max-md:order-last">
-            <Chart v-if="voteData[subject.id]" class="max-md:w-full" :size="voteData[subject.id]" :value="voteData[subject.id] * voteData[subject.id]" />
+        <div class="max-md:order-last">
+          <Chart v-if="voteData[subject.id]" class="max-md:w-full" :size="voteData[subject.id]"
+            :value="voteData[subject.id] * voteData[subject.id]" />
+        </div>
+        <div class="grid grid-cols-2 gap-2 my-auto">
+          <div class="py-2 text-center border border-stone-300 font-bold rounded-md col-span-2">{{ voteData[subject.id]
+            || 0 }}
           </div>
-          <div class="grid grid-cols-2 gap-2 my-auto">
-            <div class="py-2 text-center border border-stone-300 font-bold rounded-md col-span-2">{{ voteData[subject.id]
-              || 0 }}
-            </div>
+          <template v-if="timeStatus === 0">
+            <div class="col-span-2 text-center">Voting not started</div>
+          </template>
+          <template v-else-if="timeStatus === 1">
             <button @click="voteSubject(subject.id, -1)" class="bg-black text-white">-</button>
             <button @click="voteSubject(subject.id, 1)" class="bg-yellow-500 text-white">+</button>
-          </div>
-        </template>
+          </template>
+          <template v-else>
+            <div class="col-span-2 text-center">Voting ended</div>
+          </template>
+        </div>
       </div>
     </div>
   </div>
