@@ -18,7 +18,7 @@
           <input type="number" placeholder="Credits" v-model="credits" min="1" max="99999" />
         </div>
 
-        <button type="submit" class="w-fit mx-auto mt-10">Create Event</button>
+        <button type="submit" class="w-fit mx-auto mt-10" :disabled="waitResponse"><Spinner v-if="waitResponse" />Create Event</button>
       </form>
     </div>
   </div>
@@ -27,6 +27,7 @@
 <script setup>
 const title = ref('')
 const description = ref('')
+const waitResponse = ref(false)
 
 const formatDateForInput = (datetime) => {
   const year = datetime.getFullYear()
@@ -55,6 +56,7 @@ const createEvent = async () => {
   if (new Date(endAt.value) < new Date(startAt.value)) {
     alert('End time must be after start time')
   }
+  waitResponse.value = true
   const res = await $fetch('/api/event', {
     method: 'POST',
     body: {
@@ -65,6 +67,7 @@ const createEvent = async () => {
       credits: credits.value
     }
   })
+  waitResponse.value = false
   if (res) {
     window.location.href = `/admin/${res.uuid}?secret=${res.secret}`
   }

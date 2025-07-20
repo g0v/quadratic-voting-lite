@@ -138,6 +138,7 @@ const copyLink = async (link) => {
 }
 
 const editSubject = async (subject) => {
+  waitingRequest.value = 'as'
   newSubject.value = subject
   subjects.value = subjects.value.filter(s => s.id !== subject.id)
   await $fetch(`/api/event/${eventid}/subject/delete`, {
@@ -149,6 +150,7 @@ const editSubject = async (subject) => {
       subjectId: subject.id
     }
   })
+  waitingRequest.value = false
 }
 
 const addSubject = async () => {
