@@ -10,6 +10,7 @@ const credits = ref(0)
 const voteData = ref(vote.value.data || {})
 const voteSaveTimeout = ref(null)
 const voteChanged = ref(false)
+const showSticktop = ref(false)
 
 const timeStatus = computed(() => {
   const now = new Date()
@@ -60,15 +61,37 @@ const saveVote = async () => {
     voteSaveTimeout.value = null
     voteChanged.value = false
   }
+  localStorage.setItem(`vote-${event.value.uuid}`, vid)
   resetTimeout()
 }
 
 countCredits()
 onMounted(() => {
+  const storedVid = localStorage.getItem(`vote-${event.value.uuid}`)
+  if (storedVid && storedVid !== vid) {
+    const _res = confirm(`You have already voted for this event. Do you want to jump to your vote?`)
+    if (_res) {
+      window.location.href = `/vote/${storedVid}`
+    }
+  }
   resetTimeout()
+  window.addEventListener('scroll', () => {
+    showSticktop.value = window.scrollY > 100
+  })
 })
-
 </script>
+
+<style>
+.down-enter-active,
+.down-leave-active {
+  transition: transform 0.2s ease;
+}
+
+.down-enter-from,
+.down-leave-to {
+  transform: translateY(-100%);
+}
+</style>
 
 <template>
   <div class="container py-10">
@@ -80,6 +103,14 @@ onMounted(() => {
         <p v-if="voteChanged" class="text-yellow-500">Saving...</p>
         <p v-else class="text-green-500">Saved</p>
       </div>
+      <Transition name="down">
+        <div v-if="showSticktop" class="fixed top-0 left-0 right-0 bg-white z-50 py-2 drop-shadow-md">
+          <div class="container flex justify-between items-center">
+            <div class="font-bold text-xl">{{ event.title }}</div>
+            <div class="">Credits: {{ credits }}/{{ maxCredits }}</div>
+          </div>
+        </div>
+      </Transition>
       <div>
         <p>Credits: {{ credits }}/{{ maxCredits }}</p>
         <Chart :size="parseInt(Math.sqrt(maxCredits).toFixed(0))" :value="credits" />
