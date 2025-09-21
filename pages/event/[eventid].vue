@@ -4,10 +4,14 @@ const { data: event } = await useFetch(`/api/event/${eventid}`)
 const subjects = ref(event.value.data.subjects)
 const totalMoney = ref(10000)
 const totalScore = ref(0)
+const totalVotes = ref(0)
 
 onMounted(() => {
   event.value.votes.map(vote => {
     const voteData = JSON.parse(vote.data)
+    if (Object.keys(voteData).length > 0) {
+      totalVotes.value++
+    }
     Object.keys(voteData).forEach(key => {
       if (key === 'undefined') {
         return
@@ -34,6 +38,7 @@ const computedMoney = (score) => {
       <h1>{{ event.title }}</h1>
       <p>{{ event.description }}</p>
       <p>{{ new Date(event.startAt).toLocaleString() }} ~ {{ new Date(event.endAt).toLocaleString() }}</p>
+      <p>Total Voters: {{ totalVotes }}</p>
     </div>
     <table class="w-full">
       <thead>
