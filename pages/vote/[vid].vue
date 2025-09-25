@@ -1,4 +1,9 @@
 <script setup>
+import { marked } from 'marked'
+marked.setOptions({
+  breaks: true,
+  gfm: true
+})
 const { vid } = useRoute().params
 const vote = ref(await $fetch(`/api/vote/${vid}`))
 if (!vote.value) {
@@ -95,10 +100,10 @@ onMounted(() => {
 
 <template>
   <div class="container py-10">
-    <div class="grid grid-cols-2 gap-4 mb-10 pb-10 border-b">
+    <div class="grid md:grid-cols-2 gap-4 mb-10 pb-10 border-b">
       <div>
         <h1>{{ event.title }}</h1>
-        <p>{{ event.description }}</p>
+        <div v-html="marked.parse(event.description)" class="mb-6 p-4 bg-white/50 rounded"></div>
         <p>{{ new Date(event.startAt).toLocaleString() }} ~ {{ new Date(event.endAt).toLocaleString() }}</p>
         <p v-if="voteChanged" class="text-yellow-500">Saving...</p>
         <p v-else class="text-green-500">Saved</p>
@@ -106,7 +111,10 @@ onMounted(() => {
       <Transition name="down">
         <div v-if="showSticktop" class="fixed top-0 left-0 right-0 bg-white z-50 py-2 drop-shadow-md">
           <div class="container flex justify-between items-center">
-            <div class="font-bold text-xl">{{ event.title }}</div>
+            <div>
+              <span v-if="voteChanged" class="text-yellow-500">Saving...</span>
+              <span v-else class="text-green-500">Saved</span>
+            </div>
             <div class="">Credits: {{ credits }}/{{ maxCredits }}</div>
           </div>
         </div>

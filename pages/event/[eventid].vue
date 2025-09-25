@@ -1,4 +1,10 @@
 <script setup>
+import { marked } from 'marked'
+marked.setOptions({
+  breaks: true,
+  gfm: true
+})
+
 const { eventid } = useRoute().params
 const { data: event } = await useFetch(`/api/event/${eventid}`)
 const subjects = ref(event.value.data.subjects)
@@ -15,11 +21,11 @@ const computedMoney = (score) => {
 
 <template>
   <div class="container py-10">
-    <div class="mb-10">
-      <h1>{{ event.title }}</h1>
-      <p>{{ event.description }}</p>
-      <p>{{ new Date(event.startAt).toLocaleString() }} ~ {{ new Date(event.endAt).toLocaleString() }}</p>
-      <p>Total Voters: {{ totalVotes }}</p>
+    <h1 class="mb-6">{{ event.title }}</h1>
+    <div class="text-sm mb-4"><span>{{ new Date(event.startAt).toLocaleString() }}</span> ~ <span>{{ new Date(event.endAt).toLocaleString()}}</span></div>
+    <div v-html="marked.parse(event.description)" class="mb-6 p-4 bg-white/50 rounded"></div>
+    <div class="text-end">
+      <Icon>emoji_people</Icon> {{ totalVotes }}
     </div>
     <table class="w-full">
       <thead>

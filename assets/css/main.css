@@ -43,7 +43,7 @@
     @apply bg-yellow-500 text-white rounded-md p-2 px-4 hover:opacity-80 disabled:brightness-75 cursor-pointer;
   }
   a[href] {
-    @apply text-blue-500 hover:text-blue-600 underline;
+    @apply text-blue-500 hover:text-blue-600 underline break-all;
   }
   table {
     @apply border-2;
