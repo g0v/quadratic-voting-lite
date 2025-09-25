@@ -2,28 +2,9 @@
 const { eventid } = useRoute().params
 const { data: event } = await useFetch(`/api/event/${eventid}`)
 const subjects = ref(event.value.data.subjects)
-const totalMoney = ref(10000)
-const totalScore = ref(0)
-const totalVotes = ref(0)
-
-onMounted(() => {
-  event.value.votes.map(vote => {
-    const voteData = JSON.parse(vote.data)
-    if (Object.keys(voteData).length > 0) {
-      totalVotes.value++
-    }
-    Object.keys(voteData).forEach(key => {
-      if (key === 'undefined') {
-        return
-      }
-      const subject = subjects.value.find(subject => subject.id === key)
-      if (subject) {
-        subject.score = (subject.score || 0) + voteData[key]
-        totalScore.value += voteData[key]
-      }
-    })
-  })
-})
+const totalMoney = ref(event.value.data.totalMoney || 10000)
+const totalScore = ref(event.value.data.totalScore)
+const totalVotes = ref(event.value.data.totalVotes)
 
 const computedMoney = (score) => {
   const money = Math.round(totalMoney.value / totalScore.value * score)
