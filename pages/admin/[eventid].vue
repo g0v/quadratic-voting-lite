@@ -40,6 +40,7 @@ const description = ref(event.value.description)
 const startAt = ref(formatDateForInput(new Date(event.value.startAt)))
 const endAt = ref(formatDateForInput(new Date(event.value.endAt)))
 const credits = ref(event.value.credits)
+const totalMoney = ref(event.value.totalMoney)
 const waitingRequest = ref(false)
 subjects.value = event.value.data.subjects || []
 
@@ -66,7 +67,8 @@ const updateEvent = async () => {
       description: description.value,
       startAt: new Date(startAt.value),
       endAt: new Date(endAt.value),
-      credits: credits.value
+      credits: credits.value,
+      totalMoney: totalMoney.value
     }
   })
   waitingRequest.value = false
@@ -154,6 +156,9 @@ const editSubject = async (subject) => {
 }
 
 const addSubject = async () => {
+  if (!newSubject.value.name) {
+    return
+  }
   waitingRequest.value = 'as'
   const _temp = newSubject.value
   newSubject.value = {}
@@ -177,9 +182,9 @@ const addSubject = async () => {
     <div v-if="!printPage" class="bg-white rounded-md drop-shadow-md p-4">
       <ClientOnly>
         <div class="mb-4">
-          <h3 class="mb-4">Admin Link <span class="text-red-500">(Please keep this link private)</span></h3>
-          <div @click="copyLink(adminLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">{{ adminLink
-            }}
+          <h3 class="mb-4">Admin Link <red>(Please keep this link private)</red></h3>
+          <div @click="copyLink(adminLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">
+            {{ adminLink }}
             <Icon>copy_all</Icon>
           </div>
         </div>
@@ -187,39 +192,53 @@ const addSubject = async () => {
       <ClientOnly>
         <div class="mb-4">
           <h3 class="mb-4">Statistic Link</h3>
-          <div @click="copyLink(resultLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">{{ resultLink
-          }}
+          <div @click="copyLink(resultLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">
+            {{ resultLink }}
             <Icon>copy_all</Icon>
           </div>
         </div>
       </ClientOnly>
       <form @submit.prevent="updateEvent" class="flex flex-col gap-4 mb-20 border border-stone-300 rounded-md p-4">
-        <h4>Event Title</h4>
-        <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" />
+        <h4>Event Title<red> *</red>
+        </h4>
+        <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" required />
         <h4>Event Description</h4>
-        <textarea placeholder="Event Description" v-model="description" :disabled="timeStatus !== 0" />
-        <h4>Event Duration</h4>
+        <textarea placeholder="Event Description" v-model="description" :disabled="timeStatus !== 0"></textarea>
+        <hr v-if="timeStatus !== 0" class="my-4 border-stone-300"/>
+        <div class="flex gap-4 mb-6">
+          <div>
+            <h4>Credits<red> *</red>
+            </h4>
+            <input type="number" placeholder="Credits" v-model="credits" min="1" max="999" required />
+          </div>
+          <div>
+            <h4>Total Money<red> *</red>
+            </h4>
+            <input type="number" class="w-full" placeholder="Credits" v-model="totalMoney" min="0" required />
+          </div>
+        </div>
+        <h4>Event Duration<red> *</red>
+        </h4>
         <div class="grid md:grid-cols-[auto_auto_auto_auto] w-max gap-4 items-center">
           <span>Start from</span>
-          <input type="datetime-local" v-model="startAt" :disabled="timeStatus !== 0" />
+          <input type="datetime-local" v-model="startAt" required />
           <span>to</span>
-          <input type="datetime-local" v-model="endAt" :disabled="timeStatus !== 0" />
+          <input type="datetime-local" v-model="endAt" required />
         </div>
         <ClientOnly>
           <span class="md:col-span-4 text-stone-500">Current Timezone: {{ currentTimezone }}</span>
         </ClientOnly>
-        <h4>Credits per voter</h4>
-        <div class="flex gap-4 items-center">
-          <input type="number" placeholder="Credits" v-model="credits" min="1" max="999" :disabled="timeStatus !== 0" />
-        </div>
 
-        <button type="submit" class="w-fit mx-auto" v-if="timeStatus === 0" :disabled="waitingRequest === 'ue'"><Spinner v-if="waitingRequest === 'ue'" />Update Event</button>
+        <button type="submit" class="w-fit mx-auto" :disabled="waitingRequest === 'ue'">
+          <Spinner v-if="waitingRequest === 'ue'" />Update Event
+        </button>
       </form>
       <h3>Subjects</h3>
-      <div class="flex flex-col gap-2 my-5 border border-stone-300 rounded-md">
+      <div class="flex flex-col gap-2 my-5 border border-stone-300 rounded-md bg-stone-100">
         <div v-if="subjects.length === 0" class="p-4">No subjects added</div>
         <div v-for="(subject, index) in subjects" :key="subject.name"
-          class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300" :class="{ 'border-t': index !== 0 }">
+          class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300"
+          :class="{ 'border-t': index !== 0 }">
           <button v-if="timeStatus === 0" @click="editSubject(subject)" class="bg-yellow-500 w-min h-min px-2 py-2">
             <Icon>edit</Icon>
           </button>
@@ -232,22 +251,26 @@ const addSubject = async () => {
       </div>
       <template v-if="timeStatus === 0">
         <form @submit.prevent="addSubject" class="my-5 p-4 border border-stone-300 rounded-md flex flex-col gap-2">
-          <label for="subjectName">Subject Name
+          <label for="subjectName">Subject Name<red> *</red>
           </label>
-          <input type="text" v-model="newSubject.name" />
+          <input type="text" v-model="newSubject.name" required />
           <label for="subjectDescription">Subject Description
           </label>
-          <textarea v-model="newSubject.description" />
+          <textarea v-model="newSubject.description"></textarea>
           <label for="subjectUrl">Subject URL
           </label>
           <input type="text" v-model="newSubject.url" />
-          <button type="submit" class="w-fit mt-4 mx-auto" :disabled="waitingRequest === 'as'"><Spinner v-if="waitingRequest === 'as'" />Add Subject</button>
+          <button type="submit" class="w-fit mt-4 mx-auto" :disabled="waitingRequest === 'as'">
+            <Spinner v-if="waitingRequest === 'as'" />Add Subject
+          </button>
         </form>
       </template>
     </div>
     <form v-if="!printPage" @submit.prevent="generateVotes" class="mt-20 mb-5 grid md:grid-cols-3 gap-2 items-center">
       <div class="flex gap-2 items-center">
-        <button type="submit" :disabled="waitingRequest === 'gv'"><Spinner v-if="waitingRequest === 'gv'" />Add</button>
+        <button type="submit" :disabled="waitingRequest === 'gv'">
+          <Spinner v-if="waitingRequest === 'gv'" />Add
+        </button>
         <input type="number" v-model="voteCount" min="1" max="999" />
         <span>Voter</span>
       </div>

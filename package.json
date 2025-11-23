@@ -14,18 +14,27 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^6.0.0",
+    "@prisma/client": "^6.0.0",
     "@prisma/extension-accelerate": "^2.0.2",
     "@prisma/nuxt": "^0.3.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/vite": "^4.1.11",
     "better-sqlite3": "^12.2.0",
+    "dotenv": "^17.2.3",
     "marked": "^16.3.0",
     "nanoid": "^5.1.5",
     "nuxt": "^4.0.0",
+    "pg": "^8.16.3",
     "postcss": "^8.5.6",
     "postcss-nested": "^7.0.2",
     "tailwindcss": "^4.1.11",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
+    "prisma": "^6.0.0"
   }
 }

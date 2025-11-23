@@ -6,7 +6,7 @@ export default defineEventHandler(async (e) => {
   const event = await prisma.event.findUnique({
     where: { uuid: eventid },
     include: {
-      votes: true
+      votes: true,
     }
   })
   

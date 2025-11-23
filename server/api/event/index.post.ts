@@ -1,7 +1,7 @@
 import prisma from '~/lib/prisma'
 
 export default defineEventHandler(async (e) => {
-  const { eventid, title, description, startAt, endAt, credits } = await readBody(e)
+  const { eventid, title, description, startAt, endAt, credits, totalMoney } = await readBody(e)
   if (eventid) {
     const secret = getCookie(e, 'secret')
     const event = await prisma.event.findUnique({
@@ -22,7 +22,8 @@ export default defineEventHandler(async (e) => {
         description,
         startAt,
         endAt,
-        credits
+        credits,
+        totalMoney
       }
     })
     return event

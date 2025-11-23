@@ -102,7 +102,7 @@ onMounted(() => {
   <div class="container py-10">
     <div class="grid md:grid-cols-2 gap-4 mb-10 pb-10 border-b">
       <div>
-        <h1>{{ event.title }}</h1>
+        <h1 class="mb-4">{{ event.title }}</h1>
         <div v-html="marked.parse(event.description)" class="mb-6 p-4 bg-white/50 rounded"></div>
         <p>{{ new Date(event.startAt).toLocaleString() }} ~ {{ new Date(event.endAt).toLocaleString() }}</p>
         <p v-if="voteChanged" class="text-yellow-500">Saving...</p>
@@ -128,7 +128,7 @@ onMounted(() => {
       <div v-for="subject in event.data.subjects" :key="subject"
         class="p-4 bg-white drop-shadow-md rounded-md grid md:grid-cols-[1fr_auto_10rem] gap-4">
         <div class="overflow-hidden">
-          <h2 class="break-words">{{ subject.name }}</h2>
+          <h2 class="wrap-break-word mb-2">{{ subject.name }}</h2>
           <p>{{ subject.description }}</p>
           <a :href="subject.url" target="_blank">{{ subject.url }}</a>
         </div>

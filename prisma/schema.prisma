@@ -7,8 +7,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+    url = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
 }
 
 model Event {
@@ -19,6 +19,7 @@ model Event {
   startAt     DateTime
   endAt       DateTime
   credits     Int      @default(99)
+  totalMoney  Int      @default(10000)
   data        String   @default("{}")
   votes       Vote[]
   createdAt   DateTime @default(now())
