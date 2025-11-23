@@ -17,6 +17,18 @@ const computedMoney = (score) => {
   return money
 }
 
+const onTotalMoneyInput = (e) => {
+  totalMoney.value = e.target.value
+  localStorage.setItem("totalMoney", e.target.value)
+}
+
+onMounted(() => {
+  const _totalMoney = localStorage.getItem("totalMoney")
+  if(_totalMoney) {
+    totalMoney.value = _totalMoney
+  }
+})
+
 </script>
 
 <template>
@@ -44,7 +56,7 @@ const computedMoney = (score) => {
         <tr>
           <th>Total</th>
           <th>{{ totalScore }}</th>
-          <th class="p-2"><input type="number" v-model="totalMoney" class="w-full text-center" step="500" /></th>
+          <th class="p-2"><input type="number" :value="totalMoney" @input="event => onTotalMoneyInput(event)" class="w-full text-center" step="500" /></th>
         </tr>
       </tbody>
     </table>
