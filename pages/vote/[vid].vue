@@ -15,7 +15,7 @@ const credits = ref(0)
 const voteData = ref(vote.value.data || {})
 const voteSaveTimeout = ref(null)
 const voteChanged = ref(false)
-const showSticktop = ref(false)
+const lastSavedAt = ref(Date.now())
 
 const timeStatus = computed(() => {
   const now = new Date()
@@ -65,6 +65,7 @@ const saveVote = async () => {
     }
     voteSaveTimeout.value = null
     voteChanged.value = false
+    lastSavedAt.value = Date.now()
   }
   localStorage.setItem(`vote-${event.value.uuid}`, vid)
   resetTimeout()
@@ -80,51 +81,36 @@ onMounted(() => {
     }
   }
   resetTimeout()
-  window.addEventListener('scroll', () => {
-    showSticktop.value = window.scrollY > 100
-  })
 })
 </script>
-
-<style>
-.down-enter-active,
-.down-leave-active {
-  transition: transform 0.2s ease;
-}
-
-.down-enter-from,
-.down-leave-to {
-  transform: translateY(-100%);
-}
-</style>
-
 <template>
   <div class="container py-10">
     <div class="grid md:grid-cols-2 gap-4 mb-10 pb-10 border-b">
       <div>
         <h1 class="mb-4">{{ event.title }}</h1>
-        <div v-html="marked.parse(event.description)" class="mb-6 p-4 bg-white/50 rounded"></div>
-        <p>{{ new Date(event.startAt).toLocaleString() }} ~ {{ new Date(event.endAt).toLocaleString() }}</p>
-        <p v-if="voteChanged" class="text-yellow-500">Saving...</p>
-        <p v-else class="text-green-500">Saved</p>
-      </div>
-      <Transition name="down">
-        <div v-if="showSticktop" class="fixed top-0 left-0 right-0 bg-white z-50 py-2 drop-shadow-md">
-          <div class="container flex justify-between items-center">
-            <div>
-              <span v-if="voteChanged" class="text-yellow-500">Saving...</span>
-              <span v-else class="text-green-500">Saved</span>
-            </div>
-            <div class="">Credits: {{ credits }}/{{ maxCredits }}</div>
-          </div>
+        <div v-if="event.description" v-html="marked.parse(event.description)" class="mb-6 p-4 bg-white/50 rounded">
         </div>
-      </Transition>
+        <p>{{ new Date(event.startAt).toLocaleString([], { hour12: false }) }} ~ {{ new
+          Date(event.endAt).toLocaleString([], { hour12: false }) }}</p>
+      </div>
+      <div v-if="timeStatus === 1" class="fixed bottom-0 left-0 right-0 bg-white z-50 py-2"
+        style="filter: drop-shadow(0px -3px 3px rgba(0, 0, 0, 0.12));">
+        <div class="container flex justify-between items-center gap-2">
+          <div class="me-auto">Credits: {{ credits }}/{{ maxCredits }}</div>
+          <span class="text-xs text-stone-500">{{ new Date(lastSavedAt).toLocaleString([], { hour12: false }) }}</span>
+          <button @click="voteChanged = true" class="text-white"
+            :class="voteChanged ? 'bg-yellow-500' : 'bg-green-500'">
+            <span v-if="voteChanged">Saving...</span>
+            <span v-else>Saved</span>
+          </button>
+        </div>
+      </div>
       <div>
         <p>Credits: {{ credits }}/{{ maxCredits }}</p>
         <Chart :size="parseInt(Math.sqrt(maxCredits).toFixed(0))" :value="credits" />
       </div>
     </div>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 pb-16">
       <div v-for="subject in event.data.subjects" :key="subject"
         class="p-4 bg-white drop-shadow-md rounded-md grid md:grid-cols-[1fr_auto_10rem] gap-4">
         <div class="overflow-hidden">

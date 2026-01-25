@@ -29,8 +29,8 @@ onMounted(() => {
 <template>
   <div class="container py-10">
     <h1 class="mb-6">{{ event.title }}</h1>
-    <div class="text-sm mb-4"><span>{{ new Date(event.startAt).toLocaleString() }}</span> ~ <span>
-        {{ new Date(event.endAt).toLocaleString() }}</span></div>
+    <div class="text-sm mb-4"><span>{{ new Date(event.startAt).toLocaleString([], { hour12: false }) }}</span> ~ <span>
+        {{ new Date(event.endAt).toLocaleString([], { hour12: false }) }}</span></div>
     <div v-html="marked.parse(event.description || '')" class="mb-6 p-4 bg-white/50 rounded"></div>
     <div class="text-end">
       <Icon>emoji_people</Icon> {{ totalVotes }}

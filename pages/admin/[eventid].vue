@@ -182,7 +182,8 @@ const addSubject = async () => {
     <div v-if="!printPage" class="bg-white rounded-md drop-shadow-md p-4">
       <ClientOnly>
         <div class="mb-4">
-          <h3 class="mb-4">Admin Link <red>(Please keep this link private)</red></h3>
+          <h3 class="mb-4">Admin Link <red>(Please keep this link private)</red>
+          </h3>
           <div @click="copyLink(adminLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">
             {{ adminLink }}
             <Icon>copy_all</Icon>
@@ -204,7 +205,7 @@ const addSubject = async () => {
         <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" required />
         <h4>Event Description</h4>
         <textarea placeholder="Event Description" v-model="description" :disabled="timeStatus !== 0"></textarea>
-        <hr v-if="timeStatus !== 0" class="my-4 border-stone-300"/>
+        <hr v-if="timeStatus !== 0" class="my-4 border-stone-300" />
         <div class="flex gap-4 mb-6">
           <div>
             <h4>Credits<red> *</red>
@@ -237,8 +238,7 @@ const addSubject = async () => {
       <div class="flex flex-col gap-2 my-5 border border-stone-300 rounded-md bg-stone-100">
         <div v-if="subjects.length === 0" class="p-4">No subjects added</div>
         <div v-for="(subject, index) in subjects" :key="subject.name"
-          class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300"
-          :class="{ 'border-t': index !== 0 }">
+          class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300" :class="{ 'border-t': index !== 0 }">
           <button v-if="timeStatus === 0" @click="editSubject(subject)" class="bg-yellow-500 w-min h-min px-2 py-2">
             <Icon>edit</Icon>
           </button>
@@ -280,11 +280,13 @@ const addSubject = async () => {
   </div>
   <div class="grid grid-cols-2 bg-white">
     <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="border p-2 break-inside-avoid">
-      <a target="_blank" :href="`/vote/${vote.uuid}`" class="grid md:grid-cols-[2rem_1fr_1fr] gap-4">
-        <span>{{ index + 1 }}</span>
-        <span>{{ vote.uuid }}</span>
+      <a target="_blank" :href="`/vote/${vote.uuid}`" class="flex gap-2 no-underline">
+        <div class="flex flex-col gap-2 text-stone-500">
+          <div>{{ index + 1 }}. {{ vote.uuid }}</div>
+          <div class="mt-auto">{{ title }}</div>
+        </div>
         <ClientOnly>
-          <img class="w-40 p-4"
+          <img class="w-40 p-2 ms-auto"
             :src="`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${getQRData(vote.uuid)}`" />
         </ClientOnly>
       </a>
