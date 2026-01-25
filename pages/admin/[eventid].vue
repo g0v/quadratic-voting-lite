@@ -44,13 +44,37 @@ const totalMoney = ref(event.value.totalMoney)
 const waitingRequest = ref(false)
 subjects.value = event.value.data.subjects || []
 
-const updateEvent = async () => {
-  if (timeStatus.value !== 0) {
-    alert('Voting has started, you can not update the event')
-    return
+const timeStatus = computed(() => {
+  const now = new Date()
+  if (now < new Date(event.value.startAt)) {
+    return 0
+  } else if (now > new Date(event.value.endAt)) {
+    return 2
   }
-  if (new Date(startAt.value) <= new Date()) {
-    var shouldReload = confirm('Start time is in the past, you will not able to change things after this. Vote will start immediately. Do you want to continue?')
+  return 1
+})
+
+const currentTimezone = computed(() => {
+  const offset = new Date().toLocaleString('en-US', { timeZoneName: 'short' })
+  return offset.split(' ').pop()
+})
+
+const adminLink = computed(() => {
+  return window.location.href
+})
+
+const resultLink = computed(() => {
+  return `${window.location.origin}/event/${eventid}`
+})
+
+const updateEvent = async () => {
+  if (timeStatus.value !== 1 && new Date(startAt.value) <= new Date()) {
+    var shouldReload = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
+    if (!shouldReload) {
+      return
+    }
+  } else if (timeStatus.value === 1 && new Date(startAt.value) > new Date()) {
+    var shouldReload = confirm('Start time is in the future, vote will stop immediately. Do you want to continue?')
     if (!shouldReload) {
       return
     }
@@ -105,29 +129,6 @@ const PrintPage = async () => {
   window.print()
   printPage.value = false
 }
-
-const timeStatus = computed(() => {
-  const now = new Date()
-  if (now < new Date(event.value.startAt)) {
-    return 0
-  } else if (now > new Date(event.value.endAt)) {
-    return 2
-  }
-  return 1
-})
-
-const currentTimezone = computed(() => {
-  const offset = new Date().toLocaleString('en-US', { timeZoneName: 'short' })
-  return offset.split(' ').pop()
-})
-
-const adminLink = computed(() => {
-  return window.location.href
-})
-
-const resultLink = computed(() => {
-  return `${window.location.origin}/event/${eventid}`
-})
 
 const copyLink = async (link) => {
   try {
@@ -204,7 +205,7 @@ const addSubject = async () => {
         </h4>
         <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" required />
         <h4>Event Description</h4>
-        <textarea placeholder="Event Description" v-model="description" :disabled="timeStatus !== 0"></textarea>
+        <textarea placeholder="Event Description" v-model="description"></textarea>
         <hr v-if="timeStatus !== 0" class="my-4 border-stone-300" />
         <div class="flex gap-4 mb-6">
           <div>
