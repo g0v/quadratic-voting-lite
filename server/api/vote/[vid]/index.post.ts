@@ -12,6 +12,12 @@ export default defineEventHandler(async (e) => {
   if (!vote) {
     throw createError({ statusCode: 404, statusMessage: 'Vote not found' })
   }
+
+  const now = new Date();
+  if (now > vote.event.endAt) {
+    throw createError({ statusCode: 403, statusMessage: 'Vote is closed' })
+  }
+
   let usedCredits = 0
   Object.keys(data).forEach(key => {
     usedCredits += data[key] * data[key] || 0
