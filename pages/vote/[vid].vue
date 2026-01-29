@@ -59,13 +59,19 @@ const voteSubject = (subjectId, amount) => {
 
 const saveVote = async () => {
   if (voteChanged.value) {
-    const res = await $fetch(`/api/vote/${vid}`, { method: 'POST', body: { data: voteData.value } })
-    if (res.error) {
-      throw createError({ statusCode: 500, statusMessage: res.error })
+    try {
+      await $fetch(`/api/vote/${vid}`, { method: 'POST', body: { data: voteData.value } })
+      voteSaveTimeout.value = null
+      voteChanged.value = false
+      lastSavedAt.value = Date.now()
+    } catch (error) {
+      if (error.statusCode === 403) {
+        alert(error.statusMessage)
+        location.reload()
+        return
+      }
+      throw createError({ statusCode: 500, statusMessage: error.statusMessage })
     }
-    voteSaveTimeout.value = null
-    voteChanged.value = false
-    lastSavedAt.value = Date.now()
   }
   localStorage.setItem(`vote-${event.value.uuid}`, vid)
   resetTimeout()
