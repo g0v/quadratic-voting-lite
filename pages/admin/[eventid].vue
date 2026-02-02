@@ -53,13 +53,18 @@ const adminLink = url.href
 const resultLink = `${url.origin}/event/${eventid}`
 
 const updateEvent = async () => {
-  if (timeStatus.value !== 1 && new Date(startAt.value) <= new Date()) {
-    var shouldReload = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
+  const now = new Date()
+  const startAtDate = new Date(startAt.value)
+  const endAtDate = new Date(endAt.value)
+  let shouldReload
+
+  if (timeStatus.value !== 1 && startAtDate <= now) {
+    shouldReload = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
     if (!shouldReload) {
       return
     }
-  } else if (timeStatus.value === 1 && new Date(startAt.value) > new Date()) {
-    var shouldReload = confirm('Start time is in the future, vote will stop immediately. Do you want to continue?')
+  } else if (timeStatus.value === 1 && startAtDate > now) {
+    shouldReload = confirm('Start time is in the future, vote will stop immediately. Do you want to continue?')
     if (!shouldReload) {
       return
     }
@@ -74,8 +79,8 @@ const updateEvent = async () => {
       eventid: eventid,
       title: title.value,
       description: description.value,
-      startAt: new Date(startAt.value),
-      endAt: new Date(endAt.value),
+      startAt: startAtDate,
+      endAt: endAtDate,
       credits: credits.value,
       totalMoney: totalMoney.value,
     },
