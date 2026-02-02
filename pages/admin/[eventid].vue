@@ -47,18 +47,10 @@ const timeStatus = computed(() => {
   return 1
 })
 
-const currentTimezone = computed(() => {
-  const offset = new Date().toLocaleString('en-US', { timeZoneName: 'short' })
-  return offset.split(' ').pop()
-})
-
-const adminLink = computed(() => {
-  return window.location.href
-})
-
-const resultLink = computed(() => {
-  return `${window.location.origin}/event/${eventid}`
-})
+const url = useRequestURL()
+const currentTimezone = new Date().toLocaleString('en-US', { timeZoneName: 'short' }).split(' ').pop()
+const adminLink = url.href
+const resultLink = `${url.origin}/event/${eventid}`
 
 const updateEvent = async () => {
   if (timeStatus.value !== 1 && new Date(startAt.value) <= new Date()) {
