@@ -1,31 +1,3 @@
-<template>
-  <div class="flex min-h-svh items-center justify-center p-4">
-    <div class="w-full max-w-screen-sm rounded-md bg-white px-4 py-6 drop-shadow-md">
-      <form @submit.prevent="createEvent" class="flex flex-col gap-4">
-        <input type="text" placeholder="Event Title" v-model="title" maxlength="100" />
-        <textarea placeholder="Event Description" v-model="description" maxlength="1000" />
-        <div class="grid items-center gap-2 md:grid-cols-[auto_auto_auto_auto]">
-          <span>Start from</span>
-          <input type="datetime-local" v-model="startAt" />
-          <span>to</span>
-          <input type="datetime-local" v-model="endAt" />
-          <span class="inline-block min-h-6 leading-6 text-stone-500 md:col-span-4">
-            <ClientOnly>Current Timezone: {{ currentTimezone }}</ClientOnly>
-          </span>
-        </div>
-        <div class="flex items-center gap-4">
-          <span>Credits per vote</span>
-          <input type="number" placeholder="Credits" v-model="credits" min="1" max="99999" />
-        </div>
-
-        <button type="submit" class="mx-auto mt-10 w-fit" :disabled="waitResponse">
-          <Spinner v-if="waitResponse" />Create Event
-        </button>
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup>
 const router = useRouter()
 
@@ -79,3 +51,31 @@ const createEvent = async () => {
   }
 }
 </script>
+
+<template>
+  <div class="flex min-h-svh items-center justify-center p-4">
+    <div class="w-full max-w-screen-sm rounded-md bg-white px-4 py-6 drop-shadow-md">
+      <form @submit.prevent="createEvent" class="flex flex-col gap-4">
+        <input type="text" placeholder="Event Title" v-model="title" maxlength="100" />
+        <textarea placeholder="Event Description" v-model="description" maxlength="1000" />
+        <div class="grid items-center gap-2 md:grid-cols-[auto_auto_auto_auto]">
+          <span>Start from</span>
+          <input type="datetime-local" v-model="startAt" />
+          <span>to</span>
+          <input type="datetime-local" v-model="endAt" />
+          <span class="inline-block min-h-6 leading-6 text-stone-500 md:col-span-4">
+            <ClientOnly>Current Timezone: {{ currentTimezone }}</ClientOnly>
+          </span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span>Credits per vote</span>
+          <input type="number" placeholder="Credits" v-model="credits" min="1" max="99999" />
+        </div>
+
+        <button type="submit" class="mx-auto mt-10 w-fit" :disabled="waitResponse">
+          <Spinner v-if="waitResponse" />Create Event
+        </button>
+      </form>
+    </div>
+  </div>
+</template>
