@@ -1,18 +1,11 @@
 <script setup>
+import { formatDateForInput } from '~/utils/formatDateForInput'
+
 const router = useRouter()
 
 const title = ref('')
 const description = ref('')
 const waitResponse = ref(false)
-
-const formatDateForInput = datetime => {
-  const year = datetime.getFullYear()
-  const month = String(datetime.getMonth() + 1).padStart(2, '0')
-  const day = String(datetime.getDate()).padStart(2, '0')
-  const hours = String(datetime.getHours()).padStart(2, '0')
-  const minutes = String(datetime.getMinutes()).padStart(2, '0')
-  return `${year}-${month}-${day}T${hours}:${minutes}`
-}
 
 const currentTime = new Date()
 const startAt = ref(formatDateForInput(new Date(currentTime.getTime() + 1000 * 60 * 60 * 1)))

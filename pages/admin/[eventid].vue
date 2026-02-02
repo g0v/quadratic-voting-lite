@@ -1,4 +1,6 @@
 <script setup>
+import { formatDateForInput } from '~/utils/formatDateForInput'
+
 const { eventid } = useRoute().params
 let { secret } = useRoute().query
 
@@ -20,15 +22,6 @@ if (!event) {
 await nextTick()
 if (!event.value.secret) {
   throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
-}
-
-const formatDateForInput = datetime => {
-  const year = datetime.getFullYear()
-  const month = String(datetime.getMonth() + 1).padStart(2, '0')
-  const day = String(datetime.getDate()).padStart(2, '0')
-  const hours = String(datetime.getHours()).padStart(2, '0')
-  const minutes = String(datetime.getMinutes()).padStart(2, '0')
-  return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
 const voteCount = ref(20)
