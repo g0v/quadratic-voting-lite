@@ -1,5 +1,6 @@
 <script setup>
 import { formatDateForInput } from '~/utils/formatDateForInput'
+import { VoteStatus } from '~/constants/VoteStatus'
 
 const { eventid } = useRoute().params
 let { secret } = useRoute().query
@@ -37,14 +38,14 @@ const totalMoney = ref(event.value.totalMoney)
 const waitingRequest = ref(false)
 subjects.value = event.value.data.subjects || []
 
-const timeStatus = computed(() => {
+const voteStatus = computed(() => {
   const now = new Date()
   if (now < new Date(event.value.startAt)) {
-    return 0
+    return VoteStatus.NOT_STARTED
   } else if (now > new Date(event.value.endAt)) {
-    return 2
+    return VoteStatus.ENDED
   }
-  return 1
+  return VoteStatus.IN_PROGRESS
 })
 
 const url = useRequestURL()
@@ -58,12 +59,12 @@ const updateEvent = async () => {
   const endAtDate = new Date(endAt.value)
   let shouldReload
 
-  if (timeStatus.value !== 1 && startAtDate <= now) {
+  if (voteStatus.value !== VoteStatus.IN_PROGRESS && startAtDate <= now) {
     shouldReload = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
     if (!shouldReload) {
       return
     }
-  } else if (timeStatus.value === 1 && startAtDate > now) {
+  } else if (voteStatus.value === VoteStatus.IN_PROGRESS && startAtDate > now) {
     shouldReload = confirm('Start time is in the future, vote will stop immediately. Do you want to continue?')
     if (!shouldReload) {
       return
@@ -190,10 +191,16 @@ const addSubject = async () => {
       </ClientOnly>
       <form @submit.prevent="updateEvent" class="mb-20 flex flex-col gap-4 rounded-md border border-stone-300 p-4">
         <h4>Event Title<span class="text-red-600"> *</span></h4>
-        <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" required />
+        <input
+          type="text"
+          placeholder="Event Title"
+          v-model="title"
+          :disabled="voteStatus !== VoteStatus.NOT_STARTED"
+          required
+        />
         <h4>Event Description</h4>
         <textarea placeholder="Event Description" v-model="description"></textarea>
-        <hr v-if="timeStatus !== 0" class="my-4 border-stone-300" />
+        <hr v-if="voteStatus !== VoteStatus.NOT_STARTED" class="my-4 border-stone-300" />
         <div class="mb-6 flex gap-4">
           <div>
             <h4>Credits<span class="text-red-600"> *</span></h4>
@@ -228,7 +235,11 @@ const addSubject = async () => {
           class="grid grid-cols-[auto_1fr] gap-2 border-stone-300 p-2"
           :class="{ 'border-t': index !== 0 }"
         >
-          <button v-if="timeStatus === 0" @click="editSubject(subject)" class="h-min w-min bg-yellow-500 px-2 py-2">
+          <button
+            v-if="voteStatus === VoteStatus.NOT_STARTED"
+            @click="editSubject(subject)"
+            class="h-min w-min bg-yellow-500 px-2 py-2"
+          >
             <Icon>edit</Icon>
           </button>
           <div>
@@ -238,7 +249,7 @@ const addSubject = async () => {
           </div>
         </div>
       </div>
-      <template v-if="timeStatus === 0">
+      <template v-if="voteStatus === VoteStatus.NOT_STARTED">
         <form @submit.prevent="addSubject" class="my-5 flex flex-col gap-2 rounded-md border border-stone-300 p-4">
           <label for="subjectName">Subject Name<span class="text-red-600"> *</span> </label>
           <input type="text" v-model="newSubject.name" required />
