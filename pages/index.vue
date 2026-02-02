@@ -27,6 +27,8 @@
 </template>
 
 <script setup>
+const router = useRouter()
+
 const title = ref('')
 const description = ref('')
 const waitResponse = ref(false)
@@ -58,6 +60,7 @@ const createEvent = async () => {
   if (new Date(endAt.value) < new Date(startAt.value)) {
     alert('End time must be after start time')
   }
+
   waitResponse.value = true
   const res = await $fetch('/api/event', {
     method: 'POST',
@@ -70,8 +73,9 @@ const createEvent = async () => {
     },
   })
   waitResponse.value = false
+
   if (res) {
-    window.location.href = `/admin/${res.uuid}?secret=${res.secret}`
+    router.push({ path: `/admin/${res.uuid}`, query: { secret: res.secret } })
   }
 }
 </script>
