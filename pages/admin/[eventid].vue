@@ -182,7 +182,7 @@ const addSubject = async () => {
     <div v-if="!printPage" class="rounded-md bg-white p-4 drop-shadow-md">
       <ClientOnly>
         <div class="mb-4">
-          <h3 class="mb-4">Admin Link <red>(Please keep this link private)</red></h3>
+          <h3 class="mb-4">Admin Link <span class="text-red-600">(Please keep this link private)</span></h3>
           <div @click="copyLink(adminLink)" class="cursor-pointer rounded-md border border-stone-300 p-1">
             {{ adminLink }}
             <Icon>copy_all</Icon>
@@ -199,22 +199,22 @@ const addSubject = async () => {
         </div>
       </ClientOnly>
       <form @submit.prevent="updateEvent" class="mb-20 flex flex-col gap-4 rounded-md border border-stone-300 p-4">
-        <h4>Event Title<red> *</red></h4>
+        <h4>Event Title<span class="text-red-600"> *</span></h4>
         <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" required />
         <h4>Event Description</h4>
         <textarea placeholder="Event Description" v-model="description"></textarea>
         <hr v-if="timeStatus !== 0" class="my-4 border-stone-300" />
         <div class="mb-6 flex gap-4">
           <div>
-            <h4>Credits<red> *</red></h4>
+            <h4>Credits<span class="text-red-600"> *</span></h4>
             <input type="number" placeholder="Credits" v-model="credits" min="1" max="999" required />
           </div>
           <div>
-            <h4>Total Money<red> *</red></h4>
+            <h4>Total Money<span class="text-red-600"> *</span></h4>
             <input type="number" class="w-full" placeholder="Credits" v-model="totalMoney" min="0" required />
           </div>
         </div>
-        <h4>Event Duration<red> *</red></h4>
+        <h4>Event Duration<span class="text-red-600"> *</span></h4>
         <div class="grid w-max items-center gap-4 md:grid-cols-[auto_auto_auto_auto]">
           <span>Start from</span>
           <input type="datetime-local" v-model="startAt" required />
@@ -250,7 +250,7 @@ const addSubject = async () => {
       </div>
       <template v-if="timeStatus === 0">
         <form @submit.prevent="addSubject" class="my-5 flex flex-col gap-2 rounded-md border border-stone-300 p-4">
-          <label for="subjectName">Subject Name<red> *</red> </label>
+          <label for="subjectName">Subject Name<span class="text-red-600"> *</span> </label>
           <input type="text" v-model="newSubject.name" required />
           <label for="subjectDescription">Subject Description </label>
           <textarea v-model="newSubject.description"></textarea>
