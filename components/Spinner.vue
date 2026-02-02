@@ -1,3 +1,3 @@
 <template>
-  <span class="animate-spin spinner"></span>
+  <span class="spinner animate-spin"></span>
 </template>

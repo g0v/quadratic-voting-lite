@@ -2,7 +2,7 @@
 import { marked } from 'marked'
 marked.setOptions({
   breaks: true,
-  gfm: true
+  gfm: true,
 })
 const { vid } = useRoute().params
 const vote = ref(await $fetch(`/api/vote/${vid}`))
@@ -91,21 +91,32 @@ onMounted(() => {
 </script>
 <template>
   <div class="container py-10">
-    <div class="grid md:grid-cols-2 gap-4 mb-10 pb-10 border-b">
+    <div class="mb-10 grid gap-4 border-b pb-10 md:grid-cols-2">
       <div>
         <h1 class="mb-4">{{ event.title }}</h1>
-        <div v-if="event.description" v-html="marked.parse(event.description)" class="mb-6 p-4 bg-white/50 rounded">
-        </div>
-        <p>{{ new Date(event.startAt).toLocaleString([], { hour12: false }) }} ~ {{ new
-          Date(event.endAt).toLocaleString([], { hour12: false }) }}</p>
+        <div
+          v-if="event.description"
+          v-html="marked.parse(event.description)"
+          class="mb-6 rounded bg-white/50 p-4"
+        ></div>
+        <p>
+          {{ new Date(event.startAt).toLocaleString([], { hour12: false }) }} ~
+          {{ new Date(event.endAt).toLocaleString([], { hour12: false }) }}
+        </p>
       </div>
-      <div v-if="timeStatus === 1" class="fixed bottom-0 left-0 right-0 bg-white z-50 py-2"
-        style="filter: drop-shadow(0px -3px 3px rgba(0, 0, 0, 0.12));">
-        <div class="container flex justify-between items-center gap-2">
+      <div
+        v-if="timeStatus === 1"
+        class="fixed right-0 bottom-0 left-0 z-50 bg-white py-2"
+        style="filter: drop-shadow(0px -3px 3px rgba(0, 0, 0, 0.12))"
+      >
+        <div class="container flex items-center justify-between gap-2">
           <div class="me-auto">Credits: {{ credits }}/{{ maxCredits }}</div>
           <span class="text-xs text-stone-500">{{ new Date(lastSavedAt).toLocaleString([], { hour12: false }) }}</span>
-          <button @click="voteChanged = true" class="text-white"
-            :class="voteChanged ? 'bg-yellow-500' : 'bg-green-500'">
+          <button
+            @click="voteChanged = true"
+            class="text-white"
+            :class="voteChanged ? 'bg-yellow-500' : 'bg-green-500'"
+          >
             <span v-if="voteChanged">Saving...</span>
             <span v-else>Saved</span>
           </button>
@@ -117,20 +128,27 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex flex-col gap-4 pb-16">
-      <div v-for="subject in event.data.subjects" :key="subject"
-        class="p-4 bg-white drop-shadow-md rounded-md grid md:grid-cols-[1fr_auto_10rem] gap-4">
+      <div
+        v-for="subject in event.data.subjects"
+        :key="subject"
+        class="grid gap-4 rounded-md bg-white p-4 drop-shadow-md md:grid-cols-[1fr_auto_10rem]"
+      >
         <div class="overflow-hidden">
-          <h2 class="wrap-break-word mb-2">{{ subject.name }}</h2>
+          <h2 class="mb-2 wrap-break-word">{{ subject.name }}</h2>
           <p>{{ subject.description }}</p>
           <a :href="subject.url" target="_blank">{{ subject.url }}</a>
         </div>
         <div class="max-md:order-last">
-          <Chart v-if="voteData[subject.id]" class="max-md:w-full" :size="voteData[subject.id]"
-            :value="voteData[subject.id] * voteData[subject.id]" />
+          <Chart
+            v-if="voteData[subject.id]"
+            class="max-md:w-full"
+            :size="voteData[subject.id]"
+            :value="voteData[subject.id] * voteData[subject.id]"
+          />
         </div>
-        <div class="grid grid-cols-2 gap-2 my-auto">
-          <div class="py-2 text-center border border-stone-300 font-bold rounded-md col-span-2">{{ voteData[subject.id]
-            || 0 }}
+        <div class="my-auto grid grid-cols-2 gap-2">
+          <div class="col-span-2 rounded-md border border-stone-300 py-2 text-center font-bold">
+            {{ voteData[subject.id] || 0 }}
           </div>
           <template v-if="timeStatus === 0">
             <div class="col-span-2 text-center">Voting not started</div>

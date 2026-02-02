@@ -11,8 +11,8 @@ if (secret) {
 
 const { data: event } = await useFetch(`/api/event/${eventid}`, {
   headers: {
-    cookie: `secret=${secret}`
-  }
+    cookie: `secret=${secret}`,
+  },
 })
 if (!event) {
   throw createError({ statusCode: 404, statusMessage: 'Event not found' })
@@ -22,7 +22,7 @@ if (!event.value.secret) {
   throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 }
 
-const formatDateForInput = (datetime) => {
+const formatDateForInput = datetime => {
   const year = datetime.getFullYear()
   const month = String(datetime.getMonth() + 1).padStart(2, '0')
   const day = String(datetime.getDate()).padStart(2, '0')
@@ -83,7 +83,7 @@ const updateEvent = async () => {
   const res = await $fetch('/api/event', {
     method: 'POST',
     headers: {
-      cookie: `secret=${secret}`
+      cookie: `secret=${secret}`,
     },
     body: {
       eventid: eventid,
@@ -92,8 +92,8 @@ const updateEvent = async () => {
       startAt: new Date(startAt.value),
       endAt: new Date(endAt.value),
       credits: credits.value,
-      totalMoney: totalMoney.value
-    }
+      totalMoney: totalMoney.value,
+    },
   })
   waitingRequest.value = false
   if (shouldReload) {
@@ -108,17 +108,17 @@ const generateVotes = async () => {
   await $fetch(`/api/event/${eventid}/generate`, {
     method: 'POST',
     headers: {
-      cookie: `secret=${secret}`
+      cookie: `secret=${secret}`,
     },
     body: {
-      voteCount: voteCount.value
-    }
+      voteCount: voteCount.value,
+    },
   })
   waitingRequest.value = false
   window.location.reload()
 }
 
-const getQRData = (voteId) => {
+const getQRData = voteId => {
   const url = new URL(`/vote/${voteId}`, window.location.origin)
   return encodeURIComponent(url.toString())
 }
@@ -130,7 +130,7 @@ const PrintPage = async () => {
   printPage.value = false
 }
 
-const copyLink = async (link) => {
+const copyLink = async link => {
   try {
     await navigator.clipboard.writeText(link)
     alert('Link copied to clipboard!')
@@ -140,18 +140,18 @@ const copyLink = async (link) => {
   }
 }
 
-const editSubject = async (subject) => {
+const editSubject = async subject => {
   waitingRequest.value = 'as'
   newSubject.value = subject
   subjects.value = subjects.value.filter(s => s.id !== subject.id)
   await $fetch(`/api/event/${eventid}/subject/delete`, {
     method: 'POST',
     headers: {
-      cookie: `secret=${secret}`
+      cookie: `secret=${secret}`,
     },
     body: {
-      subjectId: subject.id
-    }
+      subjectId: subject.id,
+    },
   })
   waitingRequest.value = false
 }
@@ -166,26 +166,24 @@ const addSubject = async () => {
   const _subjects = await $fetch(`/api/event/${eventid}/subject/add`, {
     method: 'POST',
     headers: {
-      cookie: `secret=${secret}`
+      cookie: `secret=${secret}`,
     },
     body: {
-      subject: _temp
-    }
+      subject: _temp,
+    },
   })
   subjects.value = _subjects
   waitingRequest.value = false
 }
-
 </script>
 
 <template>
   <div class="container py-10">
-    <div v-if="!printPage" class="bg-white rounded-md drop-shadow-md p-4">
+    <div v-if="!printPage" class="rounded-md bg-white p-4 drop-shadow-md">
       <ClientOnly>
         <div class="mb-4">
-          <h3 class="mb-4">Admin Link <red>(Please keep this link private)</red>
-          </h3>
-          <div @click="copyLink(adminLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">
+          <h3 class="mb-4">Admin Link <red>(Please keep this link private)</red></h3>
+          <div @click="copyLink(adminLink)" class="cursor-pointer rounded-md border border-stone-300 p-1">
             {{ adminLink }}
             <Icon>copy_all</Icon>
           </div>
@@ -194,53 +192,53 @@ const addSubject = async () => {
       <ClientOnly>
         <div class="mb-4">
           <h3 class="mb-4">Statistic Link</h3>
-          <div @click="copyLink(resultLink)" class="p-1 border border-stone-300 rounded-md cursor-pointer">
+          <div @click="copyLink(resultLink)" class="cursor-pointer rounded-md border border-stone-300 p-1">
             {{ resultLink }}
             <Icon>copy_all</Icon>
           </div>
         </div>
       </ClientOnly>
-      <form @submit.prevent="updateEvent" class="flex flex-col gap-4 mb-20 border border-stone-300 rounded-md p-4">
-        <h4>Event Title<red> *</red>
-        </h4>
+      <form @submit.prevent="updateEvent" class="mb-20 flex flex-col gap-4 rounded-md border border-stone-300 p-4">
+        <h4>Event Title<red> *</red></h4>
         <input type="text" placeholder="Event Title" v-model="title" :disabled="timeStatus !== 0" required />
         <h4>Event Description</h4>
         <textarea placeholder="Event Description" v-model="description"></textarea>
         <hr v-if="timeStatus !== 0" class="my-4 border-stone-300" />
-        <div class="flex gap-4 mb-6">
+        <div class="mb-6 flex gap-4">
           <div>
-            <h4>Credits<red> *</red>
-            </h4>
+            <h4>Credits<red> *</red></h4>
             <input type="number" placeholder="Credits" v-model="credits" min="1" max="999" required />
           </div>
           <div>
-            <h4>Total Money<red> *</red>
-            </h4>
+            <h4>Total Money<red> *</red></h4>
             <input type="number" class="w-full" placeholder="Credits" v-model="totalMoney" min="0" required />
           </div>
         </div>
-        <h4>Event Duration<red> *</red>
-        </h4>
-        <div class="grid md:grid-cols-[auto_auto_auto_auto] w-max gap-4 items-center">
+        <h4>Event Duration<red> *</red></h4>
+        <div class="grid w-max items-center gap-4 md:grid-cols-[auto_auto_auto_auto]">
           <span>Start from</span>
           <input type="datetime-local" v-model="startAt" required />
           <span>to</span>
           <input type="datetime-local" v-model="endAt" required />
         </div>
         <ClientOnly>
-          <span class="md:col-span-4 text-stone-500">Current Timezone: {{ currentTimezone }}</span>
+          <span class="text-stone-500 md:col-span-4">Current Timezone: {{ currentTimezone }}</span>
         </ClientOnly>
 
-        <button type="submit" class="w-fit mx-auto" :disabled="waitingRequest === 'ue'">
+        <button type="submit" class="mx-auto w-fit" :disabled="waitingRequest === 'ue'">
           <Spinner v-if="waitingRequest === 'ue'" />Update Event
         </button>
       </form>
       <h3>Subjects</h3>
-      <div class="flex flex-col gap-2 my-5 border border-stone-300 rounded-md bg-stone-100">
+      <div class="my-5 flex flex-col gap-2 rounded-md border border-stone-300 bg-stone-100">
         <div v-if="subjects.length === 0" class="p-4">No subjects added</div>
-        <div v-for="(subject, index) in subjects" :key="subject.name"
-          class="p-2 gap-2 grid grid-cols-[auto_1fr] border-stone-300" :class="{ 'border-t': index !== 0 }">
-          <button v-if="timeStatus === 0" @click="editSubject(subject)" class="bg-yellow-500 w-min h-min px-2 py-2">
+        <div
+          v-for="(subject, index) in subjects"
+          :key="subject.name"
+          class="grid grid-cols-[auto_1fr] gap-2 border-stone-300 p-2"
+          :class="{ 'border-t': index !== 0 }"
+        >
+          <button v-if="timeStatus === 0" @click="editSubject(subject)" class="h-min w-min bg-yellow-500 px-2 py-2">
             <Icon>edit</Icon>
           </button>
           <div>
@@ -251,27 +249,22 @@ const addSubject = async () => {
         </div>
       </div>
       <template v-if="timeStatus === 0">
-        <form @submit.prevent="addSubject" class="my-5 p-4 border border-stone-300 rounded-md flex flex-col gap-2">
-          <label for="subjectName">Subject Name<red> *</red>
-          </label>
+        <form @submit.prevent="addSubject" class="my-5 flex flex-col gap-2 rounded-md border border-stone-300 p-4">
+          <label for="subjectName">Subject Name<red> *</red> </label>
           <input type="text" v-model="newSubject.name" required />
-          <label for="subjectDescription">Subject Description
-          </label>
+          <label for="subjectDescription">Subject Description </label>
           <textarea v-model="newSubject.description"></textarea>
-          <label for="subjectUrl">Subject URL
-          </label>
+          <label for="subjectUrl">Subject URL </label>
           <input type="text" v-model="newSubject.url" />
-          <button type="submit" class="w-fit mt-4 mx-auto" :disabled="waitingRequest === 'as'">
+          <button type="submit" class="mx-auto mt-4 w-fit" :disabled="waitingRequest === 'as'">
             <Spinner v-if="waitingRequest === 'as'" />Add Subject
           </button>
         </form>
       </template>
     </div>
-    <form v-if="!printPage" @submit.prevent="generateVotes" class="mt-20 mb-5 grid md:grid-cols-3 gap-2 items-center">
-      <div class="flex gap-2 items-center">
-        <button type="submit" :disabled="waitingRequest === 'gv'">
-          <Spinner v-if="waitingRequest === 'gv'" />Add
-        </button>
+    <form v-if="!printPage" @submit.prevent="generateVotes" class="mt-20 mb-5 grid items-center gap-2 md:grid-cols-3">
+      <div class="flex items-center gap-2">
+        <button type="submit" :disabled="waitingRequest === 'gv'"><Spinner v-if="waitingRequest === 'gv'" />Add</button>
         <input type="number" v-model="voteCount" min="1" max="999" />
         <span>Voter</span>
       </div>
@@ -280,15 +273,17 @@ const addSubject = async () => {
     </form>
   </div>
   <div class="grid grid-cols-2 bg-white">
-    <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="border p-2 break-inside-avoid">
+    <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="break-inside-avoid border p-2">
       <a target="_blank" :href="`/vote/${vote.uuid}`" class="flex gap-2 no-underline">
         <div class="flex flex-col gap-2 text-stone-500">
           <div>{{ index + 1 }}. {{ vote.uuid }}</div>
           <div class="mt-auto">{{ title }}</div>
         </div>
         <ClientOnly>
-          <img class="w-40 p-2 ms-auto"
-            :src="`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${getQRData(vote.uuid)}`" />
+          <img
+            class="ms-auto w-40 p-2"
+            :src="`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${getQRData(vote.uuid)}`"
+          />
         </ClientOnly>
       </a>
     </div>

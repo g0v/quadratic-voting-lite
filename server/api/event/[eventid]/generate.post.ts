@@ -1,12 +1,12 @@
 import prisma from '~/lib/prisma'
 import { nanoid } from 'nanoid'
 
-export default defineEventHandler(async (e) => {
+export default defineEventHandler(async e => {
   const { voteCount } = await readBody(e)
   const eventId = e.context.params?.eventid as string
   const secret = getCookie(e, 'secret')
   const event = await prisma.event.findUnique({
-    where: { uuid: eventId }
+    where: { uuid: eventId },
   })
   if (!event) {
     throw createError({ statusCode: 404, statusMessage: 'Event not found' })
@@ -17,8 +17,8 @@ export default defineEventHandler(async (e) => {
   const votes = await prisma.vote.createMany({
     data: Array.from({ length: voteCount }, () => ({
       eventUid: eventId,
-      uuid: crypto.randomUUID()
-    }))
+      uuid: crypto.randomUUID(),
+    })),
   })
   return votes
 })

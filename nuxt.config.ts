@@ -2,18 +2,18 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ["@prisma/nuxt"],
+  modules: ['@prisma/nuxt'],
   experimental: {
     componentIslands: true,
   },
   css: ['~/assets/css/main.css', '~/assets/css/font.css'],
   postcss: {
     plugins: {
-      "@tailwindcss/postcss": {},
+      '@tailwindcss/postcss': {},
       'postcss-nested': {},
-    }
+    },
   },
-   alias: {
+  alias: {
     '.prisma/client': '~/node_modules/.prisma/client',
-  }
+  },
 })

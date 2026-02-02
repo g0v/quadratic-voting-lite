@@ -1,19 +1,19 @@
 import prisma from '~/lib/prisma'
 
-export default defineEventHandler(async (e) => {
+export default defineEventHandler(async e => {
   const { data } = await readBody(e)
   const voteId = e.context.params?.vid as string
   const vote = await prisma.vote.findUnique({
     where: { uuid: voteId },
     include: {
-      event: true
-    }
+      event: true,
+    },
   })
   if (!vote) {
     throw createError({ statusCode: 404, statusMessage: 'Vote not found' })
   }
 
-  const now = new Date();
+  const now = new Date()
   if (now > vote.event.endAt) {
     throw createError({ statusCode: 403, statusMessage: 'Vote is closed' })
   }
@@ -27,7 +27,7 @@ export default defineEventHandler(async (e) => {
   }
   await prisma.vote.update({
     where: { uuid: voteId },
-    data: { data: JSON.stringify(data) }
+    data: { data: JSON.stringify(data) },
   })
   return vote
 })

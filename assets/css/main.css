@@ -1,8 +1,8 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer base {
   html {
-    font-family: "Noto Sans TC", sans-serif;
+    font-family: 'Noto Sans TC', sans-serif;
   }
   body {
     @apply bg-amber-100;
@@ -30,29 +30,31 @@
       @apply mb-4;
     }
   }
-  input, textarea {
-    @apply border border-stone-300 rounded-md p-2;
+  input,
+  textarea {
+    @apply rounded-md border border-stone-300 p-2;
     &:disabled {
       @apply bg-gray-200;
     }
-    &:focus, &:focus-visible {
-      @apply outline-none ring-2 ring-yellow-300;
+    &:focus,
+    &:focus-visible {
+      @apply ring-2 ring-yellow-300 outline-none;
     }
   }
   button {
-    @apply bg-yellow-500 text-white rounded-md p-2 px-4 hover:opacity-80 disabled:brightness-75 cursor-pointer;
+    @apply cursor-pointer rounded-md bg-yellow-500 p-2 px-4 text-white hover:opacity-80 disabled:brightness-75;
   }
   a[href] {
-    @apply text-blue-500 hover:text-blue-600 underline break-all;
+    @apply break-all text-blue-500 underline hover:text-blue-600;
   }
   table {
     @apply border-2;
   }
   th {
-    @apply p-4 border-r border-b-2;
+    @apply border-r border-b-2 p-4;
   }
   td {
-    @apply p-4 border-r border-b;
+    @apply border-r border-b p-4;
   }
   red {
     @apply text-red-500;
@@ -61,10 +63,10 @@
 
 @layer utilities {
   .container {
-    @apply lg:max-w-5xl mx-auto px-4;
+    @apply mx-auto px-4 lg:max-w-5xl;
   }
 }
 
 .spinner {
-  @apply inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2;
+  @apply mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent;
 }

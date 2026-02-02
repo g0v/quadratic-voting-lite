@@ -2,7 +2,7 @@
 import { marked } from 'marked'
 marked.setOptions({
   breaks: true,
-  gfm: true
+  gfm: true,
 })
 
 const { eventid } = useRoute().params
@@ -13,8 +13,8 @@ const totalScore = computed(() => event?.value?.data.totalScore)
 const totalVotes = computed(() => event?.value?.data.totalVotes)
 const totalMoney = computed(() => event?.value?.totalMoney)
 
-const computedMoney = (score) => {
-  const money = Math.round(totalMoney.value / totalScore.value * score)
+const computedMoney = score => {
+  const money = Math.round((totalMoney.value / totalScore.value) * score)
   return money
 }
 
@@ -23,18 +23,17 @@ onMounted(() => {
     event.value = await $fetch(`/api/event/${eventid}`)
   }, 5000)
 })
-
 </script>
 
 <template>
   <div class="container py-10">
     <h1 class="mb-6">{{ event.title }}</h1>
-    <div class="text-sm mb-4"><span>{{ new Date(event.startAt).toLocaleString([], { hour12: false }) }}</span> ~ <span>
-        {{ new Date(event.endAt).toLocaleString([], { hour12: false }) }}</span></div>
-    <div v-html="marked.parse(event.description || '')" class="mb-6 p-4 bg-white/50 rounded"></div>
-    <div class="text-end">
-      <Icon>emoji_people</Icon> {{ totalVotes }}
+    <div class="mb-4 text-sm">
+      <span>{{ new Date(event.startAt).toLocaleString([], { hour12: false }) }}</span> ~
+      <span> {{ new Date(event.endAt).toLocaleString([], { hour12: false }) }}</span>
     </div>
+    <div v-html="marked.parse(event.description || '')" class="mb-6 rounded bg-white/50 p-4"></div>
+    <div class="text-end"><Icon>emoji_people</Icon> {{ totalVotes }}</div>
     <table class="w-full">
       <thead>
         <tr>

@@ -1,21 +1,21 @@
 import prisma from '~/lib/prisma'
 
-export default defineEventHandler(async (e) => {
+export default defineEventHandler(async e => {
   const { eventid, title, description, startAt, endAt, credits, totalMoney } = await readBody(e)
   if (eventid) {
     const secret = getCookie(e, 'secret')
     const event = await prisma.event.findUnique({
       where: { uuid: eventid },
       include: {
-        votes: true
-      }
+        votes: true,
+      },
     })
     if (secret !== event?.secret) {
       throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
     await prisma.event.update({
       where: {
-        uuid: eventid
+        uuid: eventid,
       },
       data: {
         title,
@@ -23,14 +23,13 @@ export default defineEventHandler(async (e) => {
         startAt,
         endAt,
         credits,
-        totalMoney
-      }
+        totalMoney,
+      },
     })
     return event
-  }
-  else {
+  } else {
     const data = {
-      subjects: []
+      subjects: [],
     }
     const newEvent = await prisma.event.create({
       data: {
@@ -41,8 +40,8 @@ export default defineEventHandler(async (e) => {
         endAt,
         data: JSON.stringify(data),
         uuid: crypto.randomUUID(),
-        secret: crypto.randomUUID()
-      }
+        secret: crypto.randomUUID(),
+      },
     })
     return newEvent
   }

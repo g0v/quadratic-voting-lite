@@ -34,12 +34,14 @@
 ## 安裝
 
 1. 複製儲存庫：
+
 ```bash
 git clone <repository-url>
 cd quadratic-voting-lite
 ```
 
 2. 安裝依賴項：
+
 ```bash
 # npm
 npm install
@@ -55,6 +57,7 @@ bun install
 ```
 
 3. 設定資料庫：
+
 ```bash
 # 生成 Prisma 客戶端
 npx prisma generate
@@ -64,6 +67,7 @@ npx prisma migrate dev
 ```
 
 4. 在根目錄創建 `.env` 檔案：
+
 ```env
 DATABASE_URL="file:./dev.db"
 ```
