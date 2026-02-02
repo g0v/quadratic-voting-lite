@@ -9,9 +9,9 @@
           <input type="datetime-local" v-model="startAt" />
           <span>to</span>
           <input type="datetime-local" v-model="endAt" />
-          <ClientOnly>
-            <span class="text-stone-500 md:col-span-4">Current Timezone: {{ currentTimezone }}</span>
-          </ClientOnly>
+          <span class="inline-block min-h-6 leading-6 text-stone-500 md:col-span-4">
+            <ClientOnly>Current Timezone: {{ currentTimezone }}</ClientOnly>
+          </span>
         </div>
         <div class="flex items-center gap-4">
           <span>Credits per vote</span>
