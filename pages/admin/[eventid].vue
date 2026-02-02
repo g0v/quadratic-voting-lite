@@ -12,16 +12,15 @@ if (secret) {
   secret = cookie.value
 }
 
-const { data: event } = await useFetch(`/api/event/${eventid}`, {
+const { data: event, error } = await useFetch(`/api/event/${eventid}`, {
   headers: {
     cookie: `secret=${secret}`,
   },
 })
-if (!event) {
+if (error.value && error.value.statusCode === 404) {
   throw createError({ statusCode: 404, statusMessage: 'Event not found' })
 }
-await nextTick()
-if (!event.value.secret) {
+if (!event.value?.secret) {
   throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 }
 
