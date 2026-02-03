@@ -14,6 +14,7 @@ const totalVotes = computed(() => event?.value?.data.totalVotes)
 const totalMoney = computed(() => event?.value?.totalMoney)
 
 const computedMoney = score => {
+  if (totalScore.value === 0) return 0
   const money = Math.round((totalMoney.value / totalScore.value) * score)
   return money
 }
