@@ -6,7 +6,7 @@ marked.setOptions({
 })
 
 const { eventid } = useRoute().params
-const { data: event } = await useFetch(`/api/event/${eventid}`)
+const { data: event, refresh } = await useFetch(`/api/event/${eventid}`)
 
 const subjects = computed(() => event?.value?.data.subjects)
 const totalScore = computed(() => event?.value?.data.totalScore)
@@ -18,10 +18,20 @@ const computedMoney = score => {
   return money
 }
 
+let stopped = false
+const POLL_INTERVAL = 5000
+const poll = async () => {
+  if (stopped) return
+  await refresh()
+  setTimeout(poll, POLL_INTERVAL)
+}
+
 onMounted(() => {
-  setInterval(async () => {
-    event.value = await $fetch(`/api/event/${eventid}`)
-  }, 5000)
+  setTimeout(poll, POLL_INTERVAL)
+})
+
+onUnmounted(() => {
+  stopped = true
 })
 </script>
 
