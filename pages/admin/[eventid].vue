@@ -49,19 +49,18 @@ const updateEvent = async () => {
   const now = new Date()
   const startAtDate = new Date(startAt.value)
   const endAtDate = new Date(endAt.value)
-  let shouldReload
+  let keep
 
   if (voteStatus.value !== VoteStatus.IN_PROGRESS && startAtDate <= now) {
-    shouldReload = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
-    if (!shouldReload) {
-      return
-    }
+    keep = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
   } else if (voteStatus.value === VoteStatus.IN_PROGRESS && startAtDate > now) {
-    shouldReload = confirm('Start time is in the future, vote will stop immediately. Do you want to continue?')
-    if (!shouldReload) {
-      return
-    }
+    keep = confirm('Start time is in the future, vote will stop immediately. Do you want to continue?')
   }
+
+  if (!keep) {
+    return
+  }
+
   waitingRequest.value = 'ue'
   const res = await $fetch('/api/event', {
     method: 'POST',
