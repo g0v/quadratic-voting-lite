@@ -47,7 +47,7 @@ const updateEvent = async () => {
   const now = new Date()
   const startAtDate = new Date(startAt.value)
   const endAtDate = new Date(endAt.value)
-  let keep
+  let keep = true
 
   if (voteStatus.value !== VoteStatus.IN_PROGRESS && startAtDate <= now) {
     keep = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
