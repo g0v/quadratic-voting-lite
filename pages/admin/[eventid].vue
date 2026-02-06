@@ -1,6 +1,7 @@
 <script setup>
 import { formatDateForInput } from '~/utils/formatDateForInput'
 import { VoteStatus } from '~/constants/VoteStatus'
+import { useVoteStatus } from '~/composable/useVoteStatus'
 
 const { eventid } = useRoute().params
 let { secret } = useRoute().query
@@ -37,15 +38,7 @@ const totalMoney = ref(event.value.totalMoney)
 const waitingRequest = ref(false)
 subjects.value = event.value.data.subjects || []
 
-const voteStatus = computed(() => {
-  const now = new Date()
-  if (now < new Date(event.value.startAt)) {
-    return VoteStatus.NOT_STARTED
-  } else if (now > new Date(event.value.endAt)) {
-    return VoteStatus.ENDED
-  }
-  return VoteStatus.IN_PROGRESS
-})
+const voteStatus = useVoteStatus(event)
 
 const url = useRequestURL()
 const currentTimezone = new Date().toLocaleString('en-US', { timeZoneName: 'short' }).split(' ').pop()

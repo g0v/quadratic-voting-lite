@@ -1,5 +1,8 @@
 <script setup>
 import { marked } from 'marked'
+import { VoteStatus } from '~/constants/VoteStatus'
+import { useVoteStatus } from '~/composable/useVoteStatus'
+
 marked.setOptions({
   breaks: true,
   gfm: true,
@@ -17,15 +20,7 @@ const voteSaveTimeout = ref(null)
 const voteChanged = ref(false)
 const lastSavedAt = ref(Date.now())
 
-const timeStatus = computed(() => {
-  const now = new Date()
-  if (now < new Date(event.value.startAt)) {
-    return 0
-  } else if (now > new Date(event.value.endAt)) {
-    return 2
-  }
-  return 1
-})
+const voteStatus = useVoteStatus(event)
 
 const resetTimeout = () => {
   if (voteSaveTimeout.value) {
@@ -105,7 +100,7 @@ onMounted(() => {
         </p>
       </div>
       <div
-        v-if="timeStatus === 1"
+        v-if="voteStatus === VoteStatus.IN_PROGRESS"
         class="fixed right-0 bottom-0 left-0 z-50 bg-white py-2"
         style="filter: drop-shadow(0px -3px 3px rgba(0, 0, 0, 0.12))"
       >
@@ -150,10 +145,10 @@ onMounted(() => {
           <div class="col-span-2 rounded-md border border-stone-300 py-2 text-center font-bold">
             {{ voteData[subject.id] || 0 }}
           </div>
-          <template v-if="timeStatus === 0">
+          <template v-if="voteStatus === VoteStatus.NOT_STARTED">
             <div class="col-span-2 text-center">Voting not started</div>
           </template>
-          <template v-else-if="timeStatus === 1">
+          <template v-else-if="voteStatus === VoteStatus.IN_PROGRESS">
             <button @click="voteSubject(subject.id, -1)" class="bg-black text-white">-</button>
             <button @click="voteSubject(subject.id, 1)" class="bg-yellow-500 text-white">+</button>
           </template>
