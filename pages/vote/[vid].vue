@@ -111,7 +111,11 @@ onMounted(() => {
       >
         <div class="container flex items-center justify-between gap-2">
           <div class="me-auto">Credits: {{ credits }}/{{ maxCredits }}</div>
-          <span class="text-xs text-stone-500">{{ new Date(lastSavedAt).toLocaleString([], { hour12: false }) }}</span>
+          <ClientOnly>
+            <span class="text-xs text-stone-500">{{
+              new Date(lastSavedAt).toLocaleString([], { hour12: false })
+            }}</span>
+          </ClientOnly>
           <button
             @click="voteChanged = true"
             class="text-white"
