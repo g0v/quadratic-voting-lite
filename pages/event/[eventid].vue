@@ -6,7 +6,14 @@ marked.setOptions({
 })
 
 const { eventid } = useRoute().params
-const { data: event, refresh } = await useFetch(`/api/event/${eventid}`)
+const { data: event, refresh, error } = await useFetch(`/api/event/${eventid}`)
+
+if (error.value) {
+  if (error.value.statusCode === 404) {
+    throw createError({ statusCode: 404, statusMessage: 'Event not found' })
+  }
+  throw createError({ statusCode: 500, statusMessage: 'Internal server error' })
+}
 
 const subjects = computed(() => event?.value?.data.subjects)
 const totalScore = computed(() => event?.value?.data.totalScore)
@@ -37,7 +44,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container py-10">
+  <div v-if="event" class="container py-10">
     <h1 class="mb-6">{{ event.title }}</h1>
     <div class="mb-4 text-sm">
       <span>{{ new Date(event.startAt).toLocaleString([], { hour12: false }) }}</span> ~
