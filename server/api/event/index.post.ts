@@ -34,6 +34,8 @@ export default defineEventHandler(async e => {
         secret: crypto.randomUUID(),
       },
     })
+    setCookie(e, 'secret', newEvent.secret, { httpOnly: true, sameSite: 'lax' })
+
     return newEvent
   }
 })

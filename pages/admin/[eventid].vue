@@ -3,20 +3,12 @@ import { formatDateForInput } from '~/utils/formatDateForInput'
 import { VoteStatus } from '~/constants/VoteStatus'
 import { useVoteStatus } from '~/composable/useVoteStatus'
 
-const { eventid } = useRoute().params
-let { secret } = useRoute().query
-
-const cookie = useCookie('secret')
-if (secret) {
-  cookie.value = secret
-} else {
-  secret = cookie.value
-}
+const route = useRoute()
+const eventid = route.params.eventid
+const secret = route.query.secret
 
 const { data: event, error } = await useFetch(`/api/event/${eventid}`, {
-  headers: {
-    cookie: `secret=${secret}`,
-  },
+  query: { secret },
 })
 if (error.value && error.value.statusCode === 404) {
   throw createError({ statusCode: 404, statusMessage: 'Event not found' })
@@ -62,9 +54,6 @@ const updateEvent = async () => {
   waitingRequest.value = 'ue'
   const res = await $fetch('/api/event', {
     method: 'POST',
-    headers: {
-      cookie: `secret=${secret}`,
-    },
     body: {
       eventid: eventid,
       title: title.value,
@@ -84,9 +73,6 @@ const generateVotes = async () => {
   waitingRequest.value = 'gv'
   const newVotes = await $fetch(`/api/event/${eventid}/generate`, {
     method: 'POST',
-    headers: {
-      cookie: `secret=${secret}`,
-    },
     body: {
       voteCount: voteCount.value,
     },
@@ -128,9 +114,6 @@ const editSubject = async subject => {
   subjects.value = subjects.value.filter(s => s.id !== subject.id)
   await $fetch(`/api/event/${eventid}/subject/delete`, {
     method: 'POST',
-    headers: {
-      cookie: `secret=${secret}`,
-    },
     body: {
       subjectId: subject.id,
     },
@@ -147,9 +130,6 @@ const addSubject = async () => {
   newSubject.value = {}
   const _subjects = await $fetch(`/api/event/${eventid}/subject/add`, {
     method: 'POST',
-    headers: {
-      cookie: `secret=${secret}`,
-    },
     body: {
       subject: _temp,
     },
