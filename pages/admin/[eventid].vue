@@ -24,8 +24,8 @@ const subjects = ref(event.value.data.subjects || [])
 const newSubject = ref({})
 const title = ref(event.value.title)
 const description = ref(event.value.description)
-const startAt = ref(formatDateForInput(new Date(event.value.startAt)))
-const endAt = ref(formatDateForInput(new Date(event.value.endAt)))
+const startAt = ref(formatDateForInput(event.value.startAt))
+const endAt = ref(formatDateForInput(event.value.endAt))
 const credits = ref(event.value.credits)
 const totalMoney = ref(event.value.totalMoney)
 const waitingRequest = ref(false)
@@ -64,7 +64,7 @@ const updateEvent = () => {
 
   if (endAtDate < startAtDate) {
     Notiflix.Report.failure('Failed', 'End time must be after start time', 'OK', () => {
-      endAt.value = formatDateForInput(new Date(event.value.endAt))
+      endAt.value = formatDateForInput(event.value.endAt)
     })
     return
   }
