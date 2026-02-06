@@ -60,6 +60,14 @@ const _updateEvent = async () => {
 const updateEvent = () => {
   const now = new Date()
   const startAtDate = new Date(startAt.value)
+  const endAtDate = new Date(endAt.value)
+
+  if (endAtDate < startAtDate) {
+    Notiflix.Report.failure('Failed', 'End time must be after start time', 'OK', () => {
+      endAt.value = formatDateForInput(new Date(event.value.endAt))
+    })
+    return
+  }
 
   if (voteStatus.value !== VoteStatus.IN_PROGRESS && startAtDate <= now) {
     Notiflix.Confirm.show(
@@ -69,7 +77,10 @@ const updateEvent = () => {
       'No',
       _updateEvent,
     )
-  } else if (voteStatus.value === VoteStatus.IN_PROGRESS && startAtDate > now) {
+    return
+  }
+
+  if (voteStatus.value === VoteStatus.IN_PROGRESS && startAtDate > now) {
     Notiflix.Confirm.show(
       'INFO',
       'Start time is in the future, vote will stop immediately. Do you want to continue?',
@@ -77,9 +88,10 @@ const updateEvent = () => {
       'No',
       _updateEvent,
     )
-  } else {
-    _updateEvent()
+    return
   }
+
+  _updateEvent()
 }
 
 const newVoteStartIndex = ref(Infinity)
