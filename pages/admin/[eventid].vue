@@ -79,11 +79,7 @@ const updateEvent = async () => {
     },
   })
   waitingRequest.value = false
-  if (shouldReload) {
-    window.location.reload()
-  } else {
-    event.value = res
-  }
+  event.value = res
 }
 
 const generateVotes = async () => {

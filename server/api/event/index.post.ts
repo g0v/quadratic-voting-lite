@@ -6,27 +6,18 @@ export default defineEventHandler(async e => {
     const secret = getCookie(e, 'secret')
     const event = await prisma.event.findUnique({
       where: { uuid: eventid },
-      include: {
-        votes: true,
-      },
+      include: { votes: true },
     })
     if (secret !== event?.secret) {
       throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
-    await prisma.event.update({
-      where: {
-        uuid: eventid,
-      },
-      data: {
-        title,
-        description,
-        startAt,
-        endAt,
-        credits,
-        totalMoney,
-      },
+
+    const updatedEvent = await prisma.event.update({
+      where: { uuid: eventid },
+      data: { title, description, startAt, endAt, credits, totalMoney },
+      include: { votes: true },
     })
-    return event
+    return updatedEvent
   } else {
     const data = {
       subjects: [],
