@@ -1,9 +1,7 @@
 import prisma from '~/lib/prisma'
-import { nanoid } from 'nanoid'
 
 export default defineEventHandler(async e => {
-  const { voteCount } = await readBody(e)
-  const eventId = e.context.params?.eventid as string
+  const { voteCount, eventId } = await readBody(e)
   const secret = getCookie(e, 'secret')
   const event = await prisma.event.findUnique({
     where: { uuid: eventId },
@@ -21,6 +19,6 @@ export default defineEventHandler(async e => {
     })),
   })
 
-  const votes = prisma.vote.findMany({ where: { eventUid: eventId } })
+  const votes = await prisma.vote.findMany({ where: { eventUid: eventId } })
   return votes
 })

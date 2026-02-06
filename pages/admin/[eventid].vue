@@ -97,9 +97,10 @@ const updateEvent = () => {
 const newVoteStartIndex = ref(Infinity)
 const generateVotes = async () => {
   waitingRequest.value = 'gv'
-  const newVotes = await $fetch(`/api/event/${eventid}/generate`, {
+  const newVotes = await $fetch(`/api/vote`, {
     method: 'POST',
     body: {
+      eventId: eventid,
       voteCount: voteCount.value,
     },
   })
