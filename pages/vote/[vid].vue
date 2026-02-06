@@ -64,7 +64,8 @@ const saveVote = async () => {
     } catch (error) {
       if (error.statusCode === 403) {
         Notiflix.Notify.failure(error.statusMessage)
-        location.reload()
+        const vote = await $fetch(`/api/vote/${vid}`)
+        event.value = vote.event
         return
       }
       throw createError({ statusCode: 500, statusMessage: error.statusMessage })
