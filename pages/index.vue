@@ -1,4 +1,5 @@
 <script setup>
+import Notiflix from 'notiflix'
 import { formatDateForInput } from '~/utils/formatDateForInput'
 
 const router = useRouter()
@@ -19,11 +20,12 @@ const currentTimezone = computed(() => {
 
 const createEvent = async () => {
   if (new Date(startAt.value) < new Date()) {
-    alert('Start time must be in the future')
+    Notiflix.Report.failure('Failed', 'Start time must be in the future', 'OK')
     return
   }
   if (new Date(endAt.value) < new Date(startAt.value)) {
-    alert('End time must be after start time')
+    Notiflix.Report.failure('Failed', 'End time must be after start time', 'OK')
+    return
   }
 
   waitResponse.value = true

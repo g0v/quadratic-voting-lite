@@ -1,4 +1,5 @@
 <script setup>
+import Notiflix from 'notiflix'
 import { formatDateForInput } from '~/utils/formatDateForInput'
 import { VoteStatus } from '~/constants/VoteStatus'
 import { useVoteStatus } from '~/composable/useVoteStatus'
@@ -35,21 +36,9 @@ const currentTimezone = new Date().toLocaleString('en-US', { timeZoneName: 'shor
 const adminLink = url.href
 const resultLink = `${url.origin}/event/${eventid}`
 
-const updateEvent = async () => {
-  const now = new Date()
+const _updateEvent = async () => {
   const startAtDate = new Date(startAt.value)
   const endAtDate = new Date(endAt.value)
-  let keep = true
-
-  if (voteStatus.value !== VoteStatus.IN_PROGRESS && startAtDate <= now) {
-    keep = confirm('Start time is in the past, vote will start immediately. Do you want to continue?')
-  } else if (voteStatus.value === VoteStatus.IN_PROGRESS && startAtDate > now) {
-    keep = confirm('Start time is in the future, vote will stop immediately. Do you want to continue?')
-  }
-
-  if (!keep) {
-    return
-  }
 
   waitingRequest.value = 'ue'
   const res = await $fetch('/api/event', {
@@ -66,6 +55,31 @@ const updateEvent = async () => {
   })
   waitingRequest.value = false
   event.value = res
+}
+
+const updateEvent = () => {
+  const now = new Date()
+  const startAtDate = new Date(startAt.value)
+
+  if (voteStatus.value !== VoteStatus.IN_PROGRESS && startAtDate <= now) {
+    Notiflix.Confirm.show(
+      'INFO',
+      'Start time is in the past, vote will start immediately. Do you want to continue?',
+      'Yes',
+      'No',
+      _updateEvent,
+    )
+  } else if (voteStatus.value === VoteStatus.IN_PROGRESS && startAtDate > now) {
+    Notiflix.Confirm.show(
+      'INFO',
+      'Start time is in the future, vote will stop immediately. Do you want to continue?',
+      'Yes',
+      'No',
+      _updateEvent,
+    )
+  } else {
+    _updateEvent()
+  }
 }
 
 const newVoteStartIndex = ref(Infinity)
@@ -101,10 +115,10 @@ const PrintPage = async () => {
 const copyLink = async link => {
   try {
     await navigator.clipboard.writeText(link)
-    alert('Link copied to clipboard!')
+    Notiflix.Notify.success('Link copied to clipboard!')
   } catch (err) {
     console.error('Failed to copy: ', err)
-    alert('Failed to copy link')
+    Notiflix.Notify.failure('Failed to copy link')
   }
 }
 

@@ -1,13 +1,15 @@
 <script setup>
+import Notiflix from 'notiflix'
 import { marked } from 'marked'
 import { VoteStatus } from '~/constants/VoteStatus'
 import { useVoteStatus } from '~/composable/useVoteStatus'
 
+const route = useRoute()
 marked.setOptions({
   breaks: true,
   gfm: true,
 })
-const { vid } = useRoute().params
+const vid = route.params.vid
 const vote = ref(await $fetch(`/api/vote/${vid}`))
 if (!vote.value) {
   throw createError({ statusCode: 404, statusMessage: 'Vote not found' })
@@ -61,7 +63,7 @@ const saveVote = async () => {
       lastSavedAt.value = Date.now()
     } catch (error) {
       if (error.statusCode === 403) {
-        alert(error.statusMessage)
+        Notiflix.Notify.failure(error.statusMessage)
         location.reload()
         return
       }
@@ -76,12 +78,15 @@ countCredits()
 onMounted(() => {
   const storedVid = localStorage.getItem(`vote-${event.value.uuid}`)
   if (storedVid && storedVid !== vid) {
-    const _res = confirm(`You have already voted for this event. Do you want to jump to your vote?`)
-    if (_res) {
-      window.location.href = `/vote/${storedVid}`
-    }
+    Notiflix.Confirm.show(
+      'INFO',
+      'You have already voted for this event. Do you want to jump to your vote?',
+      'Yes',
+      'No',
+      () => (window.location.href = `/vote/${storedVid}`),
+      () => resetTimeout(),
+    )
   }
-  resetTimeout()
 })
 </script>
 <template>
