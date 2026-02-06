@@ -27,7 +27,7 @@ if (!event.value?.secret) {
 
 const voteCount = ref(20)
 const printPage = ref(false)
-const subjects = ref([])
+const subjects = ref(event.value.data.subjects || [])
 const newSubject = ref({})
 const title = ref(event.value.title)
 const description = ref(event.value.description)
@@ -36,8 +36,6 @@ const endAt = ref(formatDateForInput(new Date(event.value.endAt)))
 const credits = ref(event.value.credits)
 const totalMoney = ref(event.value.totalMoney)
 const waitingRequest = ref(false)
-subjects.value = event.value.data.subjects || []
-
 const voteStatus = useVoteStatus(event)
 
 const url = useRequestURL()
