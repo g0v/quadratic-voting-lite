@@ -5,6 +5,8 @@ import { VoteStatus } from '~/constants/VoteStatus'
 import { useVoteStatus } from '~/composable/useVoteStatus'
 
 const route = useRoute()
+const router = useRouter()
+
 marked.setOptions({
   breaks: true,
   gfm: true,
@@ -84,7 +86,7 @@ onMounted(() => {
       'You have already voted for this event. Do you want to jump to your vote?',
       'Yes',
       'No',
-      () => (window.location.href = `/vote/${storedVid}`),
+      () => router.push(`/vote/${storedVid}`),
       () => resetTimeout(),
     )
     return
