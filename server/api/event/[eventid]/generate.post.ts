@@ -14,11 +14,13 @@ export default defineEventHandler(async e => {
   if (secret !== event.secret) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
-  const votes = await prisma.vote.createMany({
+  await prisma.vote.createMany({
     data: Array.from({ length: voteCount }, () => ({
       eventUid: eventId,
       uuid: crypto.randomUUID(),
     })),
   })
+
+  const votes = prisma.vote.findMany({ where: { eventUid: eventId } })
   return votes
 })

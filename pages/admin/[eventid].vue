@@ -82,9 +82,10 @@ const updateEvent = async () => {
   event.value = res
 }
 
+const newVoteStartIndex = ref(Infinity)
 const generateVotes = async () => {
   waitingRequest.value = 'gv'
-  await $fetch(`/api/event/${eventid}/generate`, {
+  const newVotes = await $fetch(`/api/event/${eventid}/generate`, {
     method: 'POST',
     headers: {
       cookie: `secret=${secret}`,
@@ -94,7 +95,12 @@ const generateVotes = async () => {
     },
   })
   waitingRequest.value = false
-  window.location.reload()
+
+  newVoteStartIndex.value = event.value.votes.length
+  event.value.votes = newVotes
+
+  await nextTick()
+  document.querySelector('.newVote').scrollIntoView({ behavior: 'smooth' })
 }
 
 const getQRData = voteId => {
@@ -262,19 +268,38 @@ const addSubject = async () => {
     </form>
   </div>
   <div class="grid grid-cols-2 bg-white">
-    <div v-for="(vote, index) in event.votes" :key="vote.uuid" class="break-inside-avoid border p-2">
+    <div
+      v-for="(vote, index) in event.votes"
+      :key="vote.uuid"
+      class="break-inside-avoid border p-2"
+      :class="index >= newVoteStartIndex ? 'newVote' : ''"
+    >
       <a target="_blank" :href="`/vote/${vote.uuid}`" class="flex gap-2 no-underline">
         <div class="flex flex-col gap-2 text-stone-500">
           <div>{{ index + 1 }}. {{ vote.uuid }}</div>
           <div class="mt-auto">{{ title }}</div>
         </div>
-        <ClientOnly>
-          <img
-            class="ms-auto w-40 p-2"
-            :src="`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${getQRData(vote.uuid)}`"
-          />
-        </ClientOnly>
+        <div class="ms-auto aspect-square w-40">
+          <ClientOnly>
+            <img
+              class="w-40 p-2"
+              :src="`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${getQRData(vote.uuid)}`"
+            />
+          </ClientOnly>
+        </div>
       </a>
     </div>
   </div>
 </template>
+
+<style>
+.newVote {
+  animation: blink 0.6s ease-in-out 3;
+}
+
+@keyframes blink {
+  50% {
+    background: var(--color-amber-200);
+  }
+}
+</style>
