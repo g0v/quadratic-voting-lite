@@ -86,7 +86,9 @@ onMounted(() => {
       () => (window.location.href = `/vote/${storedVid}`),
       () => resetTimeout(),
     )
+    return
   }
+  resetTimeout()
 })
 </script>
 <template>
