@@ -19,5 +19,7 @@ export default defineNuxtPlugin(() => {
     buttonsFontSize: '16px',
     cssAnimationDuration: 200,
     width: '400px',
+    titleColor: '#f0b100',
+    okButtonBackground: '#f0b100',
   })
 })
