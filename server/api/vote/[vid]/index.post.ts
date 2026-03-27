@@ -14,8 +14,8 @@ export default defineEventHandler(async e => {
   }
 
   const now = new Date()
-  if (now > vote.event.endAt) {
-    throw createError({ statusCode: 403, statusMessage: 'Vote is closed' })
+  if (now < vote.event.startAt || now > vote.event.endAt) {
+    throw createError({ statusCode: 403, statusMessage: 'Vote is not active' })
   }
 
   let usedCredits = 0

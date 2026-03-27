@@ -4,11 +4,7 @@ const props = defineProps<{
   value: number
 }>()
 const style = computed(() => {
-  if (props.size < 10) {
-    var blockSize = 10
-  } else {
-    var blockSize = Math.floor(100 / props.size) + 1
-  }
+  const blockSize = props.size < 10 ? 10 : Math.floor(100 / props.size) + 1
   return {
     '--size': Math.abs(props.size),
     '--block-size': blockSize + 'px',

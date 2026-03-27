@@ -1,10 +1,9 @@
 import prisma from '~/lib/prisma'
 
 export default defineEventHandler(async e => {
-  const eventId = e.context.params?.eventid as string
   const voteId = e.context.params?.vid as string
   const vote = await prisma.vote.findFirst({
-    where: { uuid: voteId, eventUid: eventId },
+    where: { uuid: voteId },
     include: {
       event: true,
     },
